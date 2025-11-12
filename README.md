@@ -1,4 +1,8 @@
 <h1 align="center">
+  <img width="600" height="471" alt="image" src="https://github.com/user-attachments/assets/c7d0a403-2b60-41fb-925b-ed7360dec9d0" />
+  <br>
+
+  
   <img src="https://raw.githubusercontent.com/neovim/neovim.github.io/master/logos/neovim-logo-300x87.png" alt="Neovim">
 
   <a href="https://neovim.io/doc/">Documentation</a> |
