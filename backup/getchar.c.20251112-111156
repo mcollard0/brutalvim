@@ -15,7 +15,6 @@
 #include "nvim/api/private/helpers.h"
 #include "nvim/api/vim.h"
 #include "nvim/ascii_defs.h"
-#include "nvim/brutal.h"
 #include "nvim/buffer_defs.h"
 #include "nvim/charset.h"
 #include "nvim/cursor.h"
@@ -1789,14 +1788,6 @@ int vgetc(void)
     }
 
     last_vgetc_recorded_len = last_recorded_len;
-  }
-
-  // Brutal mode key filtering and remapping
-  if ( brutal_should_block_key( c ) ) {
-    c = K_IGNORE;  // Block cursor keys in HARD/HARDER/HARDEST modes
-  } else {
-    c = brutal_remap_key( c );  // Apply HARDEST mode randomization
-    c = brutal_apply_easy_mode_mappings( c );  // Apply EASY mode Windows-style mappings
   }
 
   // In the main loop "may_garbage_collect" can be set to do garbage
