@@ -20,7 +20,6 @@
 #include "nvim/arglist.h"
 #include "nvim/ascii_defs.h"
 #include "nvim/autocmd.h"
-#include "nvim/brutal.h"
 #include "nvim/autocmd_defs.h"
 #include "nvim/buffer.h"
 #include "nvim/buffer_defs.h"
@@ -4771,12 +4770,6 @@ bool before_quit_autocmds(win_T *wp, bool quit_all, bool forceit)
 /// ":{nr}quit": quit window {nr}
 static void ex_quit(exarg_T *eap)
 {
-  // Brutal mode: block quit in HARDER and HARDEST modes
-  if ( brutal_should_block_quit() ) {
-    emsg( "Quit commands are disabled in this brutal mode" );
-    return;
-  }
-
   if (cmdwin_type != 0) {
     cmdwin_result = Ctrl_C;
     return;
@@ -4875,12 +4868,6 @@ int before_quit_all(exarg_T *eap)
 /// ":qall": try to quit all windows
 static void ex_quitall(exarg_T *eap)
 {
-  // Brutal mode: block quit in HARDER and HARDEST modes
-  if ( brutal_should_block_quit() ) {
-    emsg( "Quit commands are disabled in this brutal mode" );
-    return;
-  }
-
   if (before_quit_all(eap) == FAIL) {
     return;
   }
@@ -4918,20 +4905,13 @@ static void ex_restart(exarg_T *eap)
     });
     set_vim_var_list(VV_ARGV, argv_cpy);
   }
-
-  char *quit_cmd = (eap->do_ecmd_cmd) ? eap->do_ecmd_cmd : "qall";
-  char *quit_cmd_copy = NULL;
-
-  // Prepend "confirm " to cmd if :confirm is used
-  if (cmdmod.cmod_flags & CMOD_CONFIRM) {
-    quit_cmd_copy = concat_str("confirm ", quit_cmd);
-    quit_cmd = quit_cmd_copy;
-  }
-
+  char *quit_cmd = (eap->do_ecmd_cmd) ? eap->do_ecmd_cmd : "qall!";
   Error err = ERROR_INIT;
+  if ((cmdmod.cmod_flags & CMOD_CONFIRM) && check_changed_any(false, false)) {
+    return;
+  }
   restarting = true;
   nvim_command(cstr_as_string(quit_cmd), &err);
-  xfree(quit_cmd_copy);
   if (ERROR_SET(&err)) {
     emsg(err.msg);  // Could not exit
     api_clear_error(&err);
@@ -5626,7 +5606,7 @@ static void ex_tabs(exarg_T *eap)
     FOR_ALL_WINDOWS_IN_TAB(wp, tp) {
       if (got_int) {
         break;
-      } else if (!wp->w_config.focusable || wp->w_config.hide) {
+      } else if (!wp->w_config.focusable) {
         continue;
       }
 

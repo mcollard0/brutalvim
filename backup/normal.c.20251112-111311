@@ -17,7 +17,6 @@
 #include "nvim/api/private/helpers.h"
 #include "nvim/ascii_defs.h"
 #include "nvim/autocmd.h"
-#include "nvim/brutal.h"
 #include "nvim/autocmd_defs.h"
 #include "nvim/buffer.h"
 #include "nvim/buffer_defs.h"
@@ -2822,11 +2821,6 @@ static void nv_zet(cmdarg_T *cap)
     FALLTHROUGH;
 
   case 'z':
-    // Brutal mode: block zz in HARDER and HARDEST modes
-    if ( brutal_should_block_quit() && nchar == 'z' ) {
-      clearopbeep( cap->oap );
-      break;
-    }
     scroll_cursor_halfway(curwin, true, false);
     redraw_later(curwin, UPD_VALID);
     set_fraction(curwin);
@@ -3197,7 +3191,7 @@ static void nv_colon(cmdarg_T *cap)
   }
 
   if (is_lua) {
-    cmd_result = map_execute_lua(true, false);
+    cmd_result = map_execute_lua(true);
   } else {
     // get a command line and execute it
     cmd_result = do_cmdline(NULL, is_cmdkey ? getcmdkeycmd : getexline, NULL,
