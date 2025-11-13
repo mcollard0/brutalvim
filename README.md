@@ -87,6 +87,9 @@ BrutalVim inherits the full Neovim codebase (~255,000 lines of C code in `src/nv
 * **--harder**: Low-Medium (4-6 hours) - Command interception
 * **--easy**: Medium (8-12 hours) - New keybindings, timer logic for hold-ESC
 * **--hardest**: High (20-30 hours) - Randomization system, extensive testing
+
+This is informally known at my company as bastardvim. 
+
 ## Next Steps
 1. Expand architecture.md with missing specifications
 2. Create backup/ directory structure
