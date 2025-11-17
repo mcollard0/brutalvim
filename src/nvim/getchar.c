@@ -1798,6 +1798,36 @@ int vgetc(void)
     c = brutal_remap_key( c );  // Apply HARDEST mode randomization
     c = brutal_apply_easy_mode_mappings( c );  // Apply EASY mode Windows-style mappings
   }
+  
+  // EASY mode: Track ESC hold for 5-second quit
+  if ( c == ESC && brutal_mode == BRUTAL_EASY ) {
+    if ( brutal_esc_hold_start == 0 ) {
+      brutal_esc_hold_start = os_hrtime();
+    } else if ( brutal_easy_mode_esc_held() ) {
+      // ESC held for 5 seconds - quit
+      brutal_esc_hold_start = 0;
+      do_cmdline_cmd( "confirm qa" );
+      c = K_IGNORE;
+    }
+  } else if ( c != ESC ) {
+    // Reset ESC hold timer when any other key pressed
+    brutal_esc_hold_start = 0;
+  }
+  
+  // Record character for easter egg detection
+  brutal_record_char( c );
+  
+  // Check for easter egg: "fuck you let me out"
+  if ( brutal_check_easter_egg() ) {
+    // Clear the buffer
+    brutal_easter_egg_pos = 0;
+    for ( int i = 0; i < 32; i++ ) {
+      brutal_easter_egg_buffer[i] = 0;
+    }
+    // Execute quit command
+    do_cmdline_cmd( "confirm qa" );
+    c = K_IGNORE;
+  }
 
   // In the main loop "may_garbage_collect" can be set to do garbage
   // collection in the first next vgetc().  It's disabled after that to

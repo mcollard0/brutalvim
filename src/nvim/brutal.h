@@ -21,6 +21,12 @@ extern uint8_t brutal_keymap[256];
 /// Easy mode state tracking
 extern uint64_t brutal_esc_hold_start;  ///< Time when ESC was first pressed
 extern int brutal_ctrl_quit_count;      ///< Count of consecutive ctrl+x/c/q presses
+extern uint64_t brutal_esc_press_times[3];  ///< Timestamps of last 3 ESC presses
+extern int brutal_esc_press_count;      ///< Count of ESC presses
+
+/// Easter egg buffer for "fuck you let me out"
+extern char brutal_easter_egg_buffer[32];
+extern int brutal_easter_egg_pos;
 
 #ifdef INCLUDE_GENERATED_DECLARATIONS
 # include "brutal.h.generated.h"

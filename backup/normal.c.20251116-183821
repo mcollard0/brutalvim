@@ -6149,15 +6149,6 @@ static void nv_esc(cmdarg_T *cap)
                     && cap->count0 == 0
                     && cap->oap->regname == 0);
 
-  // Brutal mode: Handle ESC press tracking in EASY mode
-  brutal_handle_esc_press();
-  
-  // Check for triple ESC in EASY mode
-  if ( brutal_check_triple_esc() ) {
-    do_cmdline_cmd( "confirm qa" );
-    return;
-  }
-
   if (cap->arg) {               // true for CTRL-C
     if (restart_edit == 0 && cmdwin_type == 0 && !VIsual_active && no_reason) {
       if (anyBufIsChanged()) {
