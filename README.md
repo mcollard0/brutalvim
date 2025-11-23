@@ -221,7 +221,12 @@ For issues specific to BrutalVim modes, please check:
 
 **Remember**: The best way to learn Vim is to embrace the brutality! 💪
 
+Actual User Reviews: 
+
 *"It's not a bug, it's a feature that makes you better."*
+
 "It's Brutal"
+
 "Bastard Mode Activated!" 
+
 "F*ck you let me out!"
