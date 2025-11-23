@@ -1,99 +1,199 @@
-#
-# BrutalVim Architecture Evaluation 
-# A README
-#
+# BrutalVim
+
+**Custom Vim configuration focused on minimalism and efficiency. It's BRUTAL!**
+
+A fork of Neovim with progressive difficulty modes that force users to master Vim navigation and break bad habits through increasingly challenging constraints. Based on an idea by Laslo Szeremi.
+
+Informally known at my company as "bastardvim."
+
 ## Overview
-BrutalVim is a fork of Neovim (currently at upstream Neovim codebase state) with the goal of adding difficulty modes inspired by Laslo Szeremi's idea. The project aims to introduce four command-line arguments that modify editor behavior: `--hard`, `--harder`, `--hardest`, and `--easy`.
-## Current State
-### Documentation
-The `architecture.md` file exists but is minimal (22 lines). It defines the four modes:
-* **`--hard`**: Disables cursor keys, leaves `zz` and `:q` enabled
-* **`--harder`**: Disables `zz` and `:q`
-* **`--hardest`**: Randomizes all keybindings with logical replacements, disables copy/paste/yank/undo/visual mode, potentially disables echo in normal mode command line
-* **`--easy`**: Multiple quit shortcuts (hold ESC 5 seconds, triple Ctrl+X/C/Q), Windows-style shortcuts (Ctrl+X/C/V for cut/copy/paste, Ctrl+Z for undo), cursor keys enabled, numpad navigation
-### Implementation Status
-**No implementation exists yet.** Grep searches for the flag strings (`--hard`, `--harder`, `--hardest`, `--easy`) across `src/` returned no matches. This is purely a design document at this stage.
-### Codebase Structure
-BrutalVim inherits the full Neovim codebase (~255,000 lines of C code in `src/nvim/` alone):
-**Key Files for Implementation:**
-* `src/nvim/main.c` - Command-line argument parsing (lines 1052-1504 in `command_line_scan()`)
-* `src/nvim/getchar.c` - Character input and keybinding handling
-* `src/nvim/mapping.c` - Key mapping system
-* `src/nvim/tui/input.c` - Terminal UI input processing
-* `src/nvim/normal.c` - Normal mode command processing
-**Project Structure:**
-* `src/nvim/` - Core application (organized into subsystems: api/, eval/, event/, lua/, os/, tui/)
-* `runtime/` - Plugins and documentation
-* `test/` - Test suite (exists, but no brutal mode tests yet)
-* No `backup/` directory exists yet (per user rules, this should be created)
-## Architecture Analysis
+
+BrutalVim extends Neovim with four difficulty modes that modify editor behavior through command-line arguments. Each mode provides a different challenge level, from beginner-friendly to absolute chaos.
+
+## Features
+
+### 🟢 EASY Mode (`--easy`)
+Perfect for beginners transitioning from other editors.
+- **Windows-style shortcuts**: Ctrl+Z (undo), Ctrl+C/X/V (copy/cut/paste)
+- **Multiple quit options**: Hold ESC for 5 seconds, or triple-press Ctrl+X/C/Q
+- **Easter egg**: Type "fuck you let me out" with Levenshtein distance tolerance
+- Arrow keys enabled for comfortable navigation
+
+### 🟡 HARD Mode (`--hard`)
+Forces proper Vim navigation habits.
+- **Disabled**: Arrow keys, PageUp/Down, Home/End
+- **Requires**: hjkl navigation, word motions (w/b/e)
+- Tracks arrow key attempts and shows stats on quit
+
+### 🟠 HARDER Mode (`--harder`)
+All HARD restrictions plus intentional quitting.
+- **Additionally disabled**: `:q`, `:quit`, `:qall`, `zz` (center screen)
+- **Must use**: `:wq!` or `:x!` to exit
+- Forces deliberate actions and prevents muscle memory exits
+
+### 🔴 HARDEST Mode (`--hardest`)
+Complete keyboard chaos with randomized keybindings.
+- **All keybindings randomized** within logical groups (motion, edit, visual, search)
+- **Disabled**: All HARDER mode restrictions apply
+- **Fisher-Yates shuffle**: Ensures one-to-one mapping consistency
+- **Session-based**: Different random mappings each launch
+- Keys stay within their logical groups (e.g., motion keys remain motion keys)
+
+## Installation
+
+### From Source
+
+```bash
+git clone https://github.com/mcollard0/brutalvim.git
+cd brutalvim
+make CMAKE_BUILD_TYPE=RelWithDebInfo
+sudo make install
+```
+
+## Usage
+
+Launch with one of the difficulty flags:
+
+```bash
+nvim --easy myfile.txt      # Beginner mode
+nvim --hard myfile.txt      # No arrow keys
+nvim --harder myfile.txt    # No easy quit
+nvim --hardest myfile.txt   # Randomized chaos
+```
+
+## Implementation Status
+
+### ✅ Fully Implemented
+- **HARD Mode**: Complete with input filtering in `getchar.c`
+- **HARDER Mode**: Quit blocking in `ex_docmd.c`, `zz` blocking in `normal.c`
+- **HARDEST Mode**: Full randomization system with Fisher-Yates shuffle
+- **Startup Banners**: ASCII art display for all modes showing restrictions
+
+### 🚧 Partially Implemented
+- **EASY Mode**: Core features implemented, Windows shortcuts need additional hooks
+
+### 📁 Architecture
+```
+src/nvim/
+├── brutal.h          # Mode enum, global state, function declarations
+├── brutal.c          # All brutal mode logic (~350 lines)
+├── main.c            # CLI argument parsing integration
+├── getchar.c         # Key filtering and remapping
+├── ex_docmd.c        # Quit command blocking
+└── normal.c          # zz command blocking
+```
+
+## Key Technical Details
+
+### Mode Tracking
+- Global enum `BrutalMode` in `brutal.h` (NONE, EASY, HARD, HARDER, HARDEST)
+- Initialized during `main.c` startup via CLI parsing
+- Persists for entire session
+
+### Key Filtering (HARD/HARDER/HARDEST)
+- `brutal_should_block_key()` - O(1) checks for arrow/cursor keys
+- Integrated at lowest input level in `getchar.c`
+- Returns `K_IGNORE` for blocked keys
+
+### Randomization (HARDEST)
+- `brutal_init_keymap_hardest()` - Fisher-Yates shuffle algorithm
+- Keys grouped by function: motion (19), edit (21), visual (3), search (6), marks (3)
+- Seeded with `time(NULL)` for session uniqueness
+- `brutal_remap_key()` - O(1) array lookup for remapping
+
+### Quit Blocking (HARDER/HARDEST)
+- `brutal_should_block_quit()` - Boolean check
+- Intercepted in `ex_quit()` and `ex_quitall()` functions
+- Forces `:wq!` or `:x!` usage
+
+## Performance
+
+- **Key remapping**: O(1) array lookup
+- **Key blocking**: Simple conditional checks
+- **Startup overhead**: Minimal (banner display + mode init)
+- **Negligible impact** on editor operations
+
+## Documentation
+
+- `architecture.md` - Detailed implementation specs (734 lines)
+- `BRUTAL_MODES.md` - User guide with examples and tips (225 lines)
+- `BUILD.md` - Build instructions
+- `CONTRIBUTING.md` - Development guidelines
+
+## Philosophy
+
+- **EASY**: Remove intimidation, familiarize with Vim concepts
+- **HARD**: Force muscle memory for hjkl navigation
+- **HARDER**: Build discipline through deliberate actions
+- **HARDEST**: Embrace chaos, truly understand modal editing
+
+## Testing
+
+Manual testing required:
+- `--hard`: Verify arrow keys blocked, hjkl functional
+- `--harder`: Verify quit commands blocked, zz disabled
+- `--hardest`: Verify randomization, consistency within session
+- `--easy`: Verify ESC-hold quit, shortcuts functional
+- Normal mode: Verify no regression without flags
+
+## Future Enhancements
+
+1. Complete EASY mode Windows-style shortcuts with proper insert/visual mode hooks
+2. Persistent randomization seeds for HARDEST mode reproducibility
+3. Visual feedback for blocked key presses
+4. `:BrutalMode` command to query current mode
+5. In-session mode switching capability
+6. Automated test suite for all modes
+7. Integration with Neovim help system (`:help brutal`)
+
+## Code Statistics
+
+- **New files**: 2 (brutal.h, brutal.c)
+- **Modified files**: 4 (main.c, getchar.c, ex_docmd.c, normal.c)
+- **Lines added**: ~437 total
+  - brutal.c: ~350 lines
+  - Integration code: ~87 lines
+- **Build system changes**: 0 (automatic via CMake glob)
+
+## Architecture Evaluation
+
 ### Strengths
-1. **Clear Command-Line Interface Design** - The flag-based approach (`--hard`, etc.) follows Neovim conventions and integrates naturally with existing CLI parsing in `main.c`
-2. **Solid Foundation** - Built on Neovim's mature, well-architected codebase with comprehensive input/mapping systems
-3. **Progressive Difficulty** - Four distinct modes provide a learning curve from easy to expert
-### Challenges
-1. **Complexity of --hardest Mode** - Randomizing keybindings while maintaining "logical replacements" is non-trivial. Need to define:
-    * What constitutes a "logical replacement"?
-    * How to ensure quit/escape mappings don't conflict?
-    * Persistence of randomization (per-session? global seed?)
-2. **Deep Integration Required** - Modifications touch multiple subsystems:
-    * Command parsing (main.c)
-    * Input handling (getchar.c, tui/input.c)
-    * Mapping system (mapping.c)
-    * Normal mode commands (normal.c)
-3. **Testing Complexity** - Validating randomized keybindings and disabled features requires comprehensive test coverage
-4. **Missing Specifications**:
-    * How do modes interact with user config/plugins?
-    * Should modes be mutually exclusive?
-    * What happens with `--hard --easy` simultaneously?
-    * Behavior in visual/insert/command modes?
-### Recommendations
-1. **Start with --hard Mode** - Simplest implementation (just disable cursor key inputs)
-2. **Create Global Mode State** - Add `enum brutal_mode { BRUTAL_NONE, BRUTAL_EASY, BRUTAL_HARD, BRUTAL_HARDER, BRUTAL_HARDEST }` to track active mode
-3. **Implement in Phases**:
-    * Phase 1: CLI parsing + mode flag storage
-    * Phase 2: Input filtering for --hard (disable cursor keys)
-    * Phase 3: Command filtering for --harder (disable :q, zz)
-    * Phase 4: --easy mode shortcuts
-    * Phase 5: --hardest randomization (most complex)
-4. **Define Randomization Algorithm** - For --hardest:
-    * Use seeded PRNG for reproducibility
-    * Create mapping categories (motion, editing, quitting, etc.)
-    * Ensure one-to-one mapping (no key becomes unmapped)
-    * Store seed in config for consistency
-5. **Architecture Documentation Updates**:
-    * Expand architecture.md with implementation details
-    * Document which files will be modified
-    * Add state machine diagram for mode interactions
-    * Specify test strategy
-6. **Create Backup Strategy** - Per user rules, establish `backup/` directory with dated copies before major changes
-## Gap Analysis
-### Missing from architecture.md
-* File modification plan
-* State management approach
-* Randomization algorithm specification
-* Mode conflict resolution
-* Plugin/config interaction behavior
-* Testing approach
-* Performance considerations
-### Missing from Codebase
-* `backup/` directory
-* `warp.md` (user rule mentions checking this)
-* Implementation plan document
-* Any brutal mode code
-* Tests for brutal modes
-## Implementation Complexity Estimate
-* **--hard**: Low (2-3 hours) - Simple input filtering
-* **--harder**: Low-Medium (4-6 hours) - Command interception
-* **--easy**: Medium (8-12 hours) - New keybindings, timer logic for hold-ESC
-* **--hardest**: High (20-30 hours) - Randomization system, extensive testing
+- **Minimal invasiveness**: Only 4 files modified with focused changes
+- **Centralized logic**: All mode code in brutal.c/h
+- **Clean separation**: Mode functions provide clear API boundaries
+- **Efficient implementation**: Optimal algorithms at lowest input levels
+- **Extensible design**: Easy to add new modes or modify behavior
 
-This is informally known at my company as bastardvim. 
+### Current Limitations
+- EASY mode incomplete (Windows shortcuts need deeper integration)
+- No mode persistence between sessions
+- No runtime mode switching
+- Limited automated testing coverage
+- Silent failure for blocked operations (except quit commands)
 
-## Next Steps
-1. Expand architecture.md with missing specifications
-2. Create backup/ directory structure
-3. Create implementation plan with file-by-file changes
-4. Implement --hard mode first (proof of concept)
-5. Add test coverage for --hard
-6. Iterate through remaining modes
+## Credits
+
+- **Original Concept**: Laslo Szeremi
+- **Implementation**: Fork of Neovim with custom extensions
+- **Base Project**: [Neovim](https://github.com/neovim/neovim)
+
+## License
+
+Same as Neovim (Apache 2.0 License). See [LICENSE.txt](LICENSE.txt).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
+
+## Support
+
+For issues specific to BrutalVim modes, please check:
+1. `BRUTAL_MODES.md` - Comprehensive usage guide
+2. `architecture.md` - Implementation details
+3. GitHub Issues - Report bugs or request features
+
+---
+
+**Remember**: The best way to learn Vim is to embrace the brutality! 💪
+
+*"It's not a bug, it's a feature that makes you better."*
