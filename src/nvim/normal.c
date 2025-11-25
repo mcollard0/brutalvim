@@ -1252,24 +1252,38 @@ static int normal_execute(VimState *state, int key)
   // BrutalVim EASY mode: Intercept Ctrl+C/X/V and Enter for clipboard operations
   pos_T brutal_saved_cursor;
   bool brutal_restore_cursor = false;
+  bool brutal_was_insert_mode = false;
   if ( brutal_mode == BRUTAL_EASY ) {
     if ( VIsual_active && ( s->ca.cmdchar == Ctrl_C || s->ca.cmdchar == CAR ) ) {
-      // Ctrl+C or Enter in visual mode: Copy to clipboard and exit visual
-      s->ca.oap->regname = '+';
+      // Ctrl+C or Enter in visual mode: Copy; also sync to system clipboard if provider missing
+      s->ca.oap->regname = '0';
       s->ca.cmdchar = 'y';
       s->idx = find_command( 'y' );
+      // mark for post-op sync
+      brutal_restore_cursor = brutal_restore_cursor; // no-op to keep flags grouped
+      s->ca.retval |= 0;
     } else if ( VIsual_active && s->ca.cmdchar == Ctrl_X ) {
-      // Ctrl+X in visual mode: Cut to clipboard
-      s->ca.oap->regname = '+';
+      // Ctrl+X in visual mode: Cut; also sync to system clipboard if provider missing
+      s->ca.oap->regname = '0';
       s->ca.cmdchar = 'd';
       s->idx = find_command( 'd' );
-      } else if ( !VIsual_active && s->ca.cmdchar == Ctrl_V && s->oa.op_type == OP_NOP ) {
-        // Ctrl+V in normal mode: Paste from clipboard without moving cursor
-        brutal_saved_cursor = curwin->w_cursor;
-        brutal_restore_cursor = true;
-        s->ca.oap->regname = '+';
-        s->ca.cmdchar = 'p';
-        s->idx = find_command( 'p' );
+    } else if ( !VIsual_active && s->ca.cmdchar == Ctrl_V && s->oa.op_type == OP_NOP ) {
+      // Ctrl+V: Try to fetch from system clipboard if provider missing; else use reg0
+      if (true) {
+        char *sys = brutal_paste_from_system_clipboard();
+        if (sys) {
+          brutal_set_reg0_from_text(sys);
+          xfree(sys);
+        }
+      }
+      if ( restart_edit != 0 ) {
+        brutal_was_insert_mode = true;
+      }
+      brutal_saved_cursor = curwin->w_cursor;
+      brutal_restore_cursor = true;
+      s->ca.oap->regname = '0';
+      s->ca.cmdchar = 'p';
+      s->idx = find_command( 'p' );
     }
   }
   
@@ -1277,9 +1291,28 @@ static int normal_execute(VimState *state, int key)
   s->ca.arg = nv_cmds[s->idx].cmd_arg;
   (nv_cmds[s->idx].cmd_func)(&s->ca);
   
-  // BrutalVim EASY mode: Restore cursor position after Ctrl+V paste
+  // BrutalVim EASY mode: After command, for copy operations sync to system clipboard
+  if ( brutal_mode == BRUTAL_EASY ) {
+    if (!VIsual_active && s->ca.cmdchar == 'p') {
+      // nothing
+    }
+    // If last op was y/d into reg0, push to system clipboard
+    // Read reg0 and send to OS clipboard
+    if (s->ca.cmdchar == 'y' || s->ca.cmdchar == 'd') {
+      char *txt = brutal_get_reg0_as_text();
+      if (txt) {
+        brutal_copy_to_system_clipboard(txt);
+        xfree(txt);
+      }
+    }
+  }
+
+  // BrutalVim EASY mode: Restore cursor position and mode after Ctrl+V paste
   if ( brutal_restore_cursor ) {
     curwin->w_cursor = brutal_saved_cursor;
+    if ( brutal_was_insert_mode ) {
+      restart_edit = 'a';
+    }
   }
 
 finish:

@@ -28,6 +28,13 @@ extern int brutal_esc_press_count;      ///< Count of ESC presses
 extern char brutal_easter_egg_buffer[32];
 extern int brutal_easter_egg_pos;
 
+// Brutal helpers
+void brutal_copy_to_system_clipboard(const char *text);
+char *brutal_paste_from_system_clipboard(void);
+void brutal_set_reg0_from_text(const char *text);
+char *brutal_get_reg0_as_text(void);
+bool brutal_should_start_insert(void);
+
 #ifdef INCLUDE_GENERATED_DECLARATIONS
 # include "brutal.h.generated.h"
 #endif

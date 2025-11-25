@@ -18,6 +18,10 @@
 #include "nvim/os/time.h"
 #include "nvim/vim_defs.h"
 #include "nvim/option.h"
+#include "nvim/memory.h"
+#include "nvim/register.h"
+#include "nvim/strings.h"
+#include "nvim/eval.h"
 
 BrutalMode brutal_mode = BRUTAL_NONE;
 uint8_t brutal_keymap[256];
@@ -136,6 +140,130 @@ bool brutal_should_start_insert( void )
   return brutal_mode == BRUTAL_EASY;
 }
 
+static bool brutal_clip_provider_available(void)
+{
+  // Use provider check; false means we will fall back to direct system access
+  return eval_has_provider("clipboard", false);
+}
+
+void brutal_copy_to_system_clipboard( const char *text )
+{
+  if (brutal_mode != BRUTAL_EASY || text == NULL || *text == '\0') {
+    return;
+  }
+  if (brutal_clip_provider_available()) {
+    // Provider exists; let core handle it normally.
+    return;
+  }
+#if defined(_WIN32)
+  const char *cmds[] = { "clip.exe", NULL };
+#elif defined(__APPLE__)
+  const char *cmds[] = { "pbcopy", NULL };
+#else
+  const char *cmds[] = {
+    "wl-copy",
+    "xclip -selection clipboard -i",
+    "xsel --clipboard --input",
+    "clip.exe", // WSL fallback
+    NULL
+  };
+#endif
+  for (int i = 0; cmds[i] != NULL; i++) {
+    FILE *p = popen(cmds[i], "w");
+    if (p) {
+      fwrite(text, 1, strlen(text), p);
+      int rc = pclose(p);
+      if (rc == 0) {
+        return;
+      }
+    }
+  }
+}
+
+char *brutal_paste_from_system_clipboard( void )
+{
+  if (brutal_mode != BRUTAL_EASY) {
+    return NULL;
+  }
+  if (brutal_clip_provider_available()) {
+    return NULL; // Let provider path handle it
+  }
+#if defined(_WIN32)
+  const char *cmds[] = { "powershell.exe -command Get-Clipboard", NULL };
+#elif defined(__APPLE__)
+  const char *cmds[] = { "pbpaste", NULL };
+#else
+  const char *cmds[] = {
+    "wl-paste",
+    "xclip -selection clipboard -o",
+    "xsel --clipboard --output",
+    "powershell.exe -command Get-Clipboard", // WSL fallback
+    NULL
+  };
+#endif
+  for (int i = 0; cmds[i] != NULL; i++) {
+    FILE *p = popen(cmds[i], "r");
+    if (p) {
+      size_t cap = 0, len = 0;
+      char *out = NULL;
+      char buf[4096];
+      while (!feof(p)) {
+        size_t n = fread(buf, 1, sizeof(buf), p);
+        if (n == 0) break;
+        if (len + n + 1 > cap) {
+          cap = cap ? cap * 2 : 8192;
+          out = xrealloc(out, cap);
+        }
+        memcpy(out + len, buf, n);
+        len += n;
+      }
+      int rc = pclose(p);
+      if (rc == 0 && out) {
+        out[len] = '\0';
+        return out;
+      }
+      xfree(out);
+    }
+  }
+  return NULL;
+}
+
+void brutal_set_reg0_from_text(const char *text)
+{
+  if (!text) return;
+  // Split by \n into lines
+  size_t count = 0;
+  for (const char *s = text; *s; s++) if (*s == '\n') count++;
+  // If text ends without newline, it is a single line; otherwise final empty line indicates linewise
+  // Build yank register
+  yankreg_T reg = { 0 };
+  // Conservative: charwise register made of one item preserving newlines
+  reg.y_type = kMTCharWise;
+  reg.y_size = 1;
+  reg.y_array = xcalloc(1, sizeof(String));
+  reg.y_array[0] = cstr_to_string(text);
+  update_yankreg_width(&reg);
+  op_reg_set('0', reg, true);
+}
+
+char *brutal_get_reg0_as_text(void)
+{
+  const yankreg_T *r = op_reg_get('0');
+  if (!r || r->y_size == 0) return NULL;
+  // Concatenate lines
+  size_t total = 0;
+  for (size_t i = 0; i < r->y_size; i++) total += r->y_array[i].size + 1;
+  char *out = xmalloc(total + 1);
+  size_t pos = 0;
+  for (size_t i = 0; i < r->y_size; i++) {
+    memcpy(out + pos, r->y_array[i].data, r->y_array[i].size);
+    pos += r->y_array[i].size;
+    if (i + 1 < r->y_size) out[pos++] = '\n';
+  }
+  out[pos] = '\0';
+  return out;
+}
+
 /// Display brutal mode startup banner
 void brutal_show_banner( void )
 {
@@ -172,13 +300,14 @@ void brutal_show_banner( void )
       msg_puts( "\n" );
       msg_puts( "Modified keybindings (Windows-style):\n" );
       msg_puts( "  • Ctrl+Z  →  Undo (u)\n" );
-      msg_puts( "  • Ctrl+C  →  Copy to clipboard (in visual mode)\n" );
-      msg_puts( "  • Ctrl+X  →  Cut to clipboard (in visual mode)\n" );
-      msg_puts( "  • Enter   →  Copy to clipboard (in visual mode)\n" );
-      msg_puts( "  • Ctrl+V  →  Paste from clipboard\n" );
+      msg_puts( "  • Ctrl+C  →  Copy (in visual mode)\n" );
+      msg_puts( "  • Ctrl+X  →  Cut (in visual mode)\n" );
+      msg_puts( "  • Enter   →  Copy (in visual mode)\n" );
+      msg_puts( "  • Ctrl+V  →  Paste\n" );
       msg_puts( "\n" );
       msg_puts( "Tip: Use Shift+Arrow to select, Enter or Ctrl+C to copy.\n" );
       msg_puts( "     Ctrl+X cuts, Ctrl+V pastes. Ctrl+Arrow jumps words.\n" );
+      msg_puts( "     Copy/paste integrates with system clipboard (wl-copy/xclip/xsel/clip/pbcopy).\n" );
       msg_puts( "     Ctrl+C does NOT exit in insert mode - only in command mode!\n" );
       break;
 
