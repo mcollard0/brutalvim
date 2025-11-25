@@ -126,10 +126,8 @@ void brutal_init( void )
     // Set keymodel to include "startsel" for shift-selection
     km_startsel = true;
     
-    // Set clipboard to use system clipboard by default
-    // This makes y/d/p operations use the + register automatically
-    // Note: Full Ctrl+C/X/V integration requires normal.c hooks
-    // For now, users can use "+y, "+d, "+p or set clipboard=unnamedplus
+    // Set selectmode to "key" so Shift+Arrow enters select mode
+    do_cmdline_cmd( "set selectmode=key" );
   }
 }
 
