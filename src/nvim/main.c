@@ -637,7 +637,11 @@ int main(int argc, char **argv)
 
   // If ":startinsert" command used, stuff a dummy command to be able to
   // call normal_cmd(), which will then start Insert mode.
-  if (restart_edit != 0) {
+  // Also start insert mode for BRUTAL_EASY mode
+  if (restart_edit != 0 || brutal_should_start_insert()) {
+    if (brutal_should_start_insert()) {
+      restart_edit = 'i';  // Start in insert mode for EASY mode
+    }
     stuffcharReadbuff(K_NOP);
   }
 

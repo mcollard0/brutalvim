@@ -1250,6 +1250,8 @@ static int normal_execute(VimState *state, int key)
 
   // Execute the command!
   // BrutalVim EASY mode: Intercept Ctrl+C/X/V and Enter for clipboard operations
+  pos_T brutal_saved_cursor;
+  bool brutal_restore_cursor = false;
   if ( brutal_mode == BRUTAL_EASY ) {
     if ( VIsual_active && ( s->ca.cmdchar == Ctrl_C || s->ca.cmdchar == CAR ) ) {
       // Ctrl+C or Enter in visual mode: Copy to clipboard and exit visual
@@ -1262,16 +1264,23 @@ static int normal_execute(VimState *state, int key)
       s->ca.cmdchar = 'd';
       s->idx = find_command( 'd' );
       } else if ( !VIsual_active && s->ca.cmdchar == Ctrl_V && s->oa.op_type == OP_NOP ) {
+        // Ctrl+V in normal mode: Paste from clipboard without moving cursor
+        brutal_saved_cursor = curwin->w_cursor;
+        brutal_restore_cursor = true;
         s->ca.oap->regname = '+';
-        s->ca.cmdchar = 'g';
-        s->ca.nchar = 'p';
-        s->idx = find_command( 'g' );
+        s->ca.cmdchar = 'p';
+        s->idx = find_command( 'p' );
     }
   }
   
   // Call the command function found in the commands table.
   s->ca.arg = nv_cmds[s->idx].cmd_arg;
   (nv_cmds[s->idx].cmd_func)(&s->ca);
+  
+  // BrutalVim EASY mode: Restore cursor position after Ctrl+V paste
+  if ( brutal_restore_cursor ) {
+    curwin->w_cursor = brutal_saved_cursor;
+  }
 
 finish:
   normal_finish_command(s);

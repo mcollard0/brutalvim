@@ -129,6 +129,13 @@ void brutal_init( void )
   }
 }
 
+/// Check if we should start EASY mode in insert mode
+/// Called after initialization to set restart_edit
+bool brutal_should_start_insert( void )
+{
+  return brutal_mode == BRUTAL_EASY;
+}
+
 /// Display brutal mode startup banner
 void brutal_show_banner( void )
 {
@@ -154,11 +161,13 @@ void brutal_show_banner( void )
       msg_puts( "═══════════════════════════════════════════════════════════════════════════\n" );
       msg_puts( "\n" );
       msg_puts( "Enabled features:\n" );
+      msg_puts( "  • Starts in INSERT mode (ready to type immediately)\n" );
       msg_puts( "  • Arrow keys enabled for navigation\n" );
       msg_puts( "  • Shift+Arrow keys for text selection (like most editors)\n" );
       msg_puts( "  • Ctrl+Arrow keys for word-wise movement\n" );
-      msg_puts( "  • Hold ESC for 5 seconds to quit (with save prompt)\n" );
-      msg_puts( "  • Press ESC three times within 5 seconds to quit (with save prompt)\n" );
+      msg_puts( "  • Press ESC to enter command mode\n" );
+      msg_puts( "  • In command mode: Press ESC three times (within 5s) to quit\n" );
+      msg_puts( "  • In command mode: Hold ESC for 5 seconds to quit\n" );
       msg_puts( "  • Easter egg: Type 'fuck you let me out' anywhere to quit!\n" );
       msg_puts( "\n" );
       msg_puts( "Modified keybindings (Windows-style):\n" );
@@ -166,10 +175,11 @@ void brutal_show_banner( void )
       msg_puts( "  • Ctrl+C  →  Copy to clipboard (in visual mode)\n" );
       msg_puts( "  • Ctrl+X  →  Cut to clipboard (in visual mode)\n" );
       msg_puts( "  • Enter   →  Copy to clipboard (in visual mode)\n" );
-      msg_puts( "  • Ctrl+V  →  Paste from clipboard (normal mode)\n" );
+      msg_puts( "  • Ctrl+V  →  Paste from clipboard\n" );
       msg_puts( "\n" );
       msg_puts( "Tip: Use Shift+Arrow to select, Enter or Ctrl+C to copy.\n" );
       msg_puts( "     Ctrl+X cuts, Ctrl+V pastes. Ctrl+Arrow jumps words.\n" );
+      msg_puts( "     Ctrl+C does NOT exit in insert mode - only in command mode!\n" );
       break;
 
     case BRUTAL_HARD:
