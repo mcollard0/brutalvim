@@ -1,0 +1,827 @@
+mkdir -p ".deps"
+/usr/bin/cmake -S /home/michael/brutalvim//cmake.deps -B ".deps" -G "Ninja"   
+-- Found GNU Make at /usr/bin/gmake
+-- CMAKE_BUILD_TYPE=RelWithDebInfo
+-- Configuring done (0.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/michael/brutalvim/.deps
+mkdir -p build
+touch "build/.ran-deps-cmake"
+/usr/bin/cmake --build ".deps"
+ninja: no work to do.
+/usr/bin/cmake --build build
+[0/2] Re-checking globbed directories...
+[1/680] Running utility command for nvim_runtime_deps
+[2/680] Building C object src/nvim/CMakeFiles/nlua0.dir/__/nlua0.c.o
+[3/680] Building C object src/nvim/CMakeFiles/nlua0.dir/__/mpack/object.c.o
+[4/680] Building C object src/nvim/CMakeFiles/nlua0.dir/__/mpack/rpc.c.o
+[5/680] Building C object src/nvim/CMakeFiles/nlua0.dir/__/mpack/conv.c.o
+[6/680] Building C object src/nvim/CMakeFiles/nlua0.dir/__/mpack/mpack_core.c.o
+[7/680] cd /home/michael/brutalvim/build/src/nvim && /usr/bin/cmake -D NVIM_VERSION_MAJOR=0 -D NVIM_VERSION_MINOR=12 -D NVIM_VERSION_PATCH=0 -D NVIM_VERSION_PRERELEASE=-dev -D OUTPUT=/home/michael/brutalvim/build/cmake.config/auto/versiondef_git.h -D NVIM_SOURCE_DIR=/home/michael/brutalvim -P /home/michael/brutalvim/cmake/GenerateVersion.cmake
+-- Using NVIM_VERSION: v0.12.0-dev-132f6879fa
+[8/680] Building C object src/nvim/CMakeFiles/nlua0.dir/__/mpack/lmpack.c.o
+[9/680] Linking C shared module lib/libnlua0.so
+[10/680] Generating auto/api/autocmd.c.generated.h, ../../include/api/autocmd.h.generated.h
+[11/680] Generating auto/api/command.c.generated.h, ../../include/api/command.h.generated.h
+[12/680] Generating auto/api/events.c.generated.h, ../../include/api/events.h.generated.h
+[13/680] Generating auto/api/options.c.generated.h, ../../include/api/options.h.generated.h
+[14/680] Generating auto/api/private/validate.c.generated.h, ../../include/api/private/validate.h.generated.h
+[15/680] Generating auto/api/buffer.c.generated.h, ../../include/api/buffer.h.generated.h
+[16/680] Generating auto/api/deprecated.c.generated.h, ../../include/api/deprecated.h.generated.h
+[17/680] Generating auto/api/extmark.c.generated.h, ../../include/api/extmark.h.generated.h
+[18/680] Generating auto/api/private/converter.c.generated.h, ../../include/api/private/converter.h.generated.h
+[19/680] Generating auto/api/private/dispatch.c.generated.h, ../../include/api/private/dispatch.h.generated.h
+[20/680] Generating auto/api/private/helpers.c.generated.h, ../../include/api/private/helpers.h.generated.h
+[21/680] Generating auto/api/tabpage.c.generated.h, ../../include/api/tabpage.h.generated.h
+[22/680] Generating auto/arabic.c.generated.h, ../../include/arabic.h.generated.h
+[23/680] Generating auto/api/ui.c.generated.h, ../../include/api/ui.h.generated.h
+[24/680] Generating auto/api/vimscript.c.generated.h, ../../include/api/vimscript.h.generated.h
+[25/680] Generating auto/api/window.c.generated.h, ../../include/api/window.h.generated.h
+[26/680] Generating auto/base64.c.generated.h, ../../include/base64.h.generated.h
+[27/680] Generating auto/brutal.c.generated.h, ../../include/brutal.h.generated.h
+[28/680] Generating auto/api/vim.c.generated.h, ../../include/api/vim.h.generated.h
+[29/680] Generating auto/api/win_config.c.generated.h, ../../include/api/win_config.h.generated.h
+[30/680] Generating auto/arglist.c.generated.h, ../../include/arglist.h.generated.h
+[31/680] Generating auto/buffer_updates.c.generated.h, ../../include/buffer_updates.h.generated.h
+[32/680] Generating auto/channel.c.generated.h, ../../include/channel.h.generated.h
+[33/680] Generating auto/context.c.generated.h, ../../include/context.h.generated.h
+[34/680] Generating auto/autocmd.c.generated.h, ../../include/autocmd.h.generated.h
+[35/680] Generating auto/bufwrite.c.generated.h, ../../include/bufwrite.h.generated.h
+[36/680] Generating auto/change.c.generated.h, ../../include/change.h.generated.h
+[37/680] Generating auto/buffer.c.generated.h, ../../include/buffer.h.generated.h
+[38/680] Generating auto/charset.c.generated.h, ../../include/charset.h.generated.h
+[39/680] Generating auto/cmdexpand.c.generated.h, ../../include/cmdexpand.h.generated.h
+[40/680] Generating auto/cursor_shape.c.generated.h, ../../include/cursor_shape.h.generated.h
+[41/680] Generating auto/clipboard.c.generated.h, ../../include/clipboard.h.generated.h
+[42/680] Generating auto/cmdhist.c.generated.h, ../../include/cmdhist.h.generated.h
+[43/680] Generating auto/cursor.c.generated.h, ../../include/cursor.h.generated.h
+[44/680] Generating auto/debugger.c.generated.h, ../../include/debugger.h.generated.h
+[45/680] Generating auto/decoration.c.generated.h, ../../include/decoration.h.generated.h
+[46/680] Generating auto/digraph.c.generated.h, ../../include/digraph.h.generated.h
+[47/680] Generating auto/eval/deprecated.c.generated.h, ../../include/eval/deprecated.h.generated.h
+[48/680] Generating auto/eval/gc.c.generated.h, ../../include/eval/gc.h.generated.h
+[49/680] Generating auto/drawscreen.c.generated.h, ../../include/drawscreen.h.generated.h
+[50/680] Generating auto/eval/buffer.c.generated.h, ../../include/eval/buffer.h.generated.h
+[51/680] Generating auto/eval/executor.c.generated.h, ../../include/eval/executor.h.generated.h
+[52/680] Generating auto/decoration_provider.c.generated.h, ../../include/decoration_provider.h.generated.h
+[53/680] Generating auto/diff.c.generated.h, ../../include/diff.h.generated.h
+[54/680] Generating auto/drawline.c.generated.h, ../../include/drawline.h.generated.h
+[55/680] Generating auto/eval/decode.c.generated.h, ../../include/eval/decode.h.generated.h
+[56/680] Generating auto/eval/encode.c.generated.h, ../../include/eval/encode.h.generated.h
+[57/680] Generating auto/eval/list.c.generated.h, ../../include/eval/list.h.generated.h
+[58/680] Generating auto/event/libuv_proc.c.generated.h, ../../include/event/libuv_proc.h.generated.h
+[59/680] Generating auto/eval/fs.c.generated.h, ../../include/eval/fs.h.generated.h
+[60/680] Generating auto/eval/window.c.generated.h, ../../include/eval/window.h.generated.h
+[61/680] Generating auto/event/loop.c.generated.h, ../../include/event/loop.h.generated.h
+[62/680] Generating auto/event/multiqueue.c.generated.h, ../../include/event/multiqueue.h.generated.h
+[63/680] Generating auto/edit.c.generated.h, ../../include/edit.h.generated.h
+[64/680] Generating auto/eval.c.generated.h, ../../include/eval.h.generated.h
+[65/680] Generating auto/eval/userfunc.c.generated.h, ../../include/eval/userfunc.h.generated.h
+[66/680] Generating auto/eval/vars.c.generated.h, ../../include/eval/vars.h.generated.h
+[67/680] Generating auto/event/rstream.c.generated.h, ../../include/event/rstream.h.generated.h
+[68/680] Generating auto/event/signal.c.generated.h, ../../include/event/signal.h.generated.h
+[69/680] Generating auto/eval/funcs.c.generated.h, ../../include/eval/funcs.h.generated.h
+[70/680] Generating auto/eval/typval.c.generated.h, ../../include/eval/typval.h.generated.h
+[71/680] Generating auto/event/proc.c.generated.h, ../../include/event/proc.h.generated.h
+[72/680] Generating auto/event/socket.c.generated.h, ../../include/event/socket.h.generated.h
+[73/680] Generating auto/event/stream.c.generated.h, ../../include/event/stream.h.generated.h
+[74/680] Generating auto/event/time.c.generated.h, ../../include/event/time.h.generated.h
+[75/680] Generating auto/event/wstream.c.generated.h, ../../include/event/wstream.h.generated.h
+[76/680] Generating auto/ex_cmds2.c.generated.h, ../../include/ex_cmds2.h.generated.h
+[77/680] Generating auto/ex_eval.c.generated.h, ../../include/ex_eval.h.generated.h
+[78/680] Generating auto/ex_session.c.generated.h, ../../include/ex_session.h.generated.h
+[79/680] Generating auto/extmark.c.generated.h, ../../include/extmark.h.generated.h
+[80/680] Generating auto/ex_cmds.c.generated.h, ../../include/ex_cmds.h.generated.h
+[81/680] Generating auto/file_search.c.generated.h, ../../include/file_search.h.generated.h
+[82/680] Generating auto/fold.c.generated.h, ../../include/fold.h.generated.h
+[83/680] Generating auto/fuzzy.c.generated.h, ../../include/fuzzy.h.generated.h
+[84/680] Generating auto/garray.c.generated.h, ../../include/garray.h.generated.h
+[85/680] Generating auto/grid.c.generated.h, ../../include/grid.h.generated.h
+[86/680] Generating auto/hashtab.c.generated.h, ../../include/hashtab.h.generated.h
+[87/680] Generating auto/ex_getln.c.generated.h, ../../include/ex_getln.h.generated.h
+[88/680] Generating auto/fileio.c.generated.h, ../../include/fileio.h.generated.h
+[89/680] Generating auto/help.c.generated.h, ../../include/help.h.generated.h
+[90/680] Generating auto/getchar.c.generated.h, ../../include/getchar.h.generated.h
+[91/680] Generating auto/highlight.c.generated.h, ../../include/highlight.h.generated.h
+[92/680] Generating auto/highlight_group.c.generated.h, ../../include/highlight_group.h.generated.h
+[93/680] Generating auto/indent.c.generated.h, ../../include/indent.h.generated.h
+[94/680] Generating auto/input.c.generated.h, ../../include/input.h.generated.h
+[95/680] Generating auto/linematch.c.generated.h, ../../include/linematch.h.generated.h
+[96/680] Generating auto/lua/api_wrappers.c.generated.h, ../../include/lua/api_wrappers.h.generated.h
+[97/680] Generating auto/ex_docmd.c.generated.h, ../../include/ex_docmd.h.generated.h
+[98/680] Generating auto/indent_c.c.generated.h, ../../include/indent_c.h.generated.h
+[99/680] Generating auto/keycodes.c.generated.h, ../../include/keycodes.h.generated.h
+[100/680] Generating auto/log.c.generated.h, ../../include/log.h.generated.h
+[101/680] Generating auto/lua/base64.c.generated.h, ../../include/lua/base64.h.generated.h
+[102/680] Generating auto/lua/converter.c.generated.h, ../../include/lua/converter.h.generated.h
+[103/680] Generating auto/lua/secure.c.generated.h, ../../include/lua/secure.h.generated.h
+[104/680] Generating auto/lua/spell.c.generated.h, ../../include/lua/spell.h.generated.h
+[105/680] Generating auto/insexpand.c.generated.h, ../../include/insexpand.h.generated.h
+[106/680] Generating auto/lua/executor.c.generated.h, ../../include/lua/executor.h.generated.h
+[107/680] Generating auto/lua/stdlib.c.generated.h, ../../include/lua/stdlib.h.generated.h
+[108/680] Generating auto/lua/xdiff.c.generated.h, ../../include/lua/xdiff.h.generated.h
+[109/680] Generating auto/map.c.generated.h, ../../include/map.h.generated.h
+[110/680] Generating auto/map_glyph_cache.c.generated.h, ../../include/map_glyph_cache.h.generated.h
+[111/680] Generating auto/lua/treesitter.c.generated.h, ../../include/lua/treesitter.h.generated.h
+[112/680] Generating auto/main.c.generated.h, ../../include/main.h.generated.h
+[113/680] Generating auto/match.c.generated.h, ../../include/match.h.generated.h
+[114/680] Generating auto/math.c.generated.h, ../../include/math.h.generated.h
+[115/680] Generating auto/mapping.c.generated.h, ../../include/mapping.h.generated.h
+[116/680] Generating auto/mark.c.generated.h, ../../include/mark.h.generated.h
+[117/680] Generating auto/marktree.c.generated.h, ../../include/marktree.h.generated.h
+[118/680] Generating auto/mbyte.c.generated.h, ../../include/mbyte.h.generated.h
+[119/680] Generating auto/memfile.c.generated.h, ../../include/memfile.h.generated.h
+[120/680] Generating auto/memline.c.generated.h, ../../include/memline.h.generated.h
+[121/680] Generating auto/memory.c.generated.h, ../../include/memory.h.generated.h
+[122/680] Generating auto/menu.c.generated.h, ../../include/menu.h.generated.h
+[123/680] Generating auto/mouse.c.generated.h, ../../include/mouse.h.generated.h
+[124/680] Generating auto/move.c.generated.h, ../../include/move.h.generated.h
+[125/680] Generating auto/msgpack_rpc/packer.c.generated.h, ../../include/msgpack_rpc/packer.h.generated.h
+[126/680] Generating auto/message.c.generated.h, ../../include/message.h.generated.h
+[127/680] Generating auto/msgpack_rpc/channel.c.generated.h, ../../include/msgpack_rpc/channel.h.generated.h
+[128/680] Generating auto/msgpack_rpc/server.c.generated.h, ../../include/msgpack_rpc/server.h.generated.h
+[129/680] Generating auto/msgpack_rpc/unpacker.c.generated.h, ../../include/msgpack_rpc/unpacker.h.generated.h
+[130/680] Generating auto/ops.c.generated.h, ../../include/ops.h.generated.h
+[131/680] Generating auto/os/dl.c.generated.h, ../../include/os/dl.h.generated.h
+[132/680] Generating auto/os/env.c.generated.h, ../../include/os/env.h.generated.h
+[133/680] Generating auto/os/fileio.c.generated.h, ../../include/os/fileio.h.generated.h
+[134/680] Generating auto/normal.c.generated.h, ../../include/normal.h.generated.h
+[135/680] Generating auto/optionstr.c.generated.h, ../../include/optionstr.h.generated.h
+[136/680] Generating auto/os/fs.c.generated.h, ../../include/os/fs.h.generated.h
+[137/680] Generating auto/os/input.c.generated.h, ../../include/os/input.h.generated.h
+[138/680] Generating auto/os/lang.c.generated.h, ../../include/os/lang.h.generated.h
+[139/680] Generating auto/os/mem.c.generated.h, ../../include/os/mem.h.generated.h
+[140/680] Generating auto/option.c.generated.h, ../../include/option.h.generated.h
+[141/680] Generating auto/os/proc.c.generated.h, ../../include/os/proc.h.generated.h
+[142/680] Generating auto/os/pty_proc_unix.c.generated.h, ../../include/os/pty_proc_unix.h.generated.h
+[143/680] Generating auto/os/shell.c.generated.h, ../../include/os/shell.h.generated.h
+[144/680] Generating auto/os/signal.c.generated.h, ../../include/os/signal.h.generated.h
+[145/680] Generating auto/os/users.c.generated.h, ../../include/os/users.h.generated.h
+[146/680] Generating auto/os/stdpaths.c.generated.h, ../../include/os/stdpaths.h.generated.h
+[147/680] Generating auto/os/time.c.generated.h, ../../include/os/time.h.generated.h
+[148/680] Generating auto/path.c.generated.h, ../../include/path.h.generated.h
+[149/680] Generating auto/plines.c.generated.h, ../../include/plines.h.generated.h
+[150/680] Generating auto/popupmenu.c.generated.h, ../../include/popupmenu.h.generated.h
+[151/680] Generating auto/profile.c.generated.h, ../../include/profile.h.generated.h
+[152/680] Generating auto/sha256.c.generated.h, ../../include/sha256.h.generated.h
+[153/680] Generating auto/register.c.generated.h, ../../include/register.h.generated.h
+[154/680] Generating auto/sign.c.generated.h, ../../include/sign.h.generated.h
+[155/680] Generating auto/search.c.generated.h, ../../include/search.h.generated.h
+[156/680] Generating auto/statusline.c.generated.h, ../../include/statusline.h.generated.h
+[157/680] Generating auto/runtime.c.generated.h, ../../include/runtime.h.generated.h
+[158/680] Generating auto/spell.c.generated.h, ../../include/spell.h.generated.h
+[159/680] Generating auto/state.c.generated.h, ../../include/state.h.generated.h
+[160/680] Generating auto/shada.c.generated.h, ../../include/shada.h.generated.h
+[161/680] Generating auto/spellsuggest.c.generated.h, ../../include/spellsuggest.h.generated.h
+[162/680] Generating auto/testing.c.generated.h, ../../include/testing.h.generated.h
+[163/680] Generating auto/tui/input.c.generated.h, ../../include/tui/input.h.generated.h
+[164/680] Generating auto/tui/terminfo.c.generated.h, ../../include/tui/terminfo.h.generated.h
+[165/680] Generating auto/strings.c.generated.h, ../../include/strings.h.generated.h
+[166/680] Generating auto/textformat.c.generated.h, ../../include/textformat.h.generated.h
+[167/680] Generating auto/textobject.c.generated.h, ../../include/textobject.h.generated.h
+[168/680] Generating auto/quickfix.c.generated.h, ../../include/quickfix.h.generated.h
+[169/680] Generating auto/syntax.c.generated.h, ../../include/syntax.h.generated.h
+[170/680] Generating auto/tag.c.generated.h, ../../include/tag.h.generated.h
+[171/680] Generating auto/terminal.c.generated.h, ../../include/terminal.h.generated.h
+[172/680] Generating auto/tui/termkey/driver-csi.c.generated.h, ../../include/tui/termkey/driver-csi.h.generated.h
+[173/680] Generating auto/tui/termkey/driver-ti.c.generated.h, ../../include/tui/termkey/driver-ti.h.generated.h
+[174/680] Generating auto/tui/termkey/termkey.c.generated.h, ../../include/tui/termkey/termkey.h.generated.h
+[175/680] Generating auto/spellfile.c.generated.h, ../../include/spellfile.h.generated.h
+[176/680] Generating auto/ugrid.c.generated.h, ../../include/ugrid.h.generated.h
+[177/680] Generating auto/ui_client.c.generated.h, ../../include/ui_client.h.generated.h
+[178/680] Generating auto/ui_compositor.c.generated.h, ../../include/ui_compositor.h.generated.h
+[179/680] Generating auto/regexp.c.generated.h, ../../include/regexp.h.generated.h
+[180/680] Generating auto/tui/tui.c.generated.h, ../../include/tui/tui.h.generated.h
+[181/680] Generating auto/ui.c.generated.h, ../../include/ui.h.generated.h
+[182/680] Generating auto/vterm/encoding.c.generated.h, ../../include/vterm/encoding.h.generated.h
+[183/680] Generating auto/viml/parser/parser.c.generated.h, ../../include/viml/parser/parser.h.generated.h
+[184/680] Generating auto/vterm/pen.c.generated.h, ../../include/vterm/pen.h.generated.h
+[185/680] Generating auto/undo.c.generated.h, ../../include/undo.h.generated.h
+[186/680] Generating auto/usercmd.c.generated.h, ../../include/usercmd.h.generated.h
+[187/680] Generating auto/viml/parser/expressions.c.generated.h, ../../include/viml/parser/expressions.h.generated.h
+[188/680] Generating auto/vterm/keyboard.c.generated.h, ../../include/vterm/keyboard.h.generated.h
+[189/680] Generating auto/vterm/mouse.c.generated.h, ../../include/vterm/mouse.h.generated.h
+[190/680] Generating auto/vterm/parser.c.generated.h, ../../include/vterm/parser.h.generated.h
+[191/680] Generating auto/vterm/screen.c.generated.h, ../../include/vterm/screen.h.generated.h
+[192/680] Generating auto/vterm/vterm.c.generated.h, ../../include/vterm/vterm.h.generated.h
+[193/680] Generating auto/winfloat.c.generated.h, ../../include/winfloat.h.generated.h
+[194/680] Generating ../../include/api/autocmd.h.inline.generated.h
+[195/680] Generating ../../include/api/deprecated.h.inline.generated.h
+[196/680] Generating auto/vterm/state.c.generated.h, ../../include/vterm/state.h.generated.h
+[197/680] Generating ../../include/api/buffer.h.inline.generated.h
+[198/680] Generating ../../include/api/command.h.inline.generated.h
+[199/680] Generating ../../include/api/events.h.inline.generated.h
+[200/680] Generating ../../include/api/extmark.h.inline.generated.h
+[201/680] Generating ../../include/api/private/converter.h.inline.generated.h
+[202/680] Generating ../../include/api/private/defs.h.inline.generated.h
+[203/680] Generating ../../include/api/keysets_defs.h.inline.generated.h
+[204/680] Generating ../../include/api/options.h.inline.generated.h
+[205/680] Generating ../../include/api/private/dispatch.h.inline.generated.h
+[206/680] Generating ../../include/api/private/helpers.h.inline.generated.h
+[207/680] Generating ../../include/api/private/validate.h.inline.generated.h
+[208/680] Generating ../../include/api/tabpage.h.inline.generated.h
+[209/680] Generating ../../include/api/ui.h.inline.generated.h
+[210/680] Generating ../../include/api/win_config.h.inline.generated.h
+[211/680] Generating ../../include/api/ui_events.h.inline.generated.h
+[212/680] Generating auto/window.c.generated.h, ../../include/window.h.generated.h
+[213/680] Generating ../../include/api/vimscript.h.inline.generated.h
+[214/680] Generating ../../include/api/vim.h.inline.generated.h
+[215/680] Generating ../../include/api/window.h.inline.generated.h
+[216/680] Generating ../../include/arabic.h.inline.generated.h
+[217/680] Generating ../../include/arglist.h.inline.generated.h
+[218/680] Generating ../../include/ascii_defs.h.inline.generated.h
+[219/680] Generating ../../include/assert_defs.h.inline.generated.h
+[220/680] Generating ../../include/autocmd.h.inline.generated.h
+[221/680] Generating ../../include/autocmd_defs.h.inline.generated.h
+[222/680] Generating ../../include/base64.h.inline.generated.h
+[223/680] Generating ../../include/brutal.h.inline.generated.h
+[224/680] Generating ../../include/arglist_defs.h.inline.generated.h
+[225/680] Generating ../../include/buffer.h.inline.generated.h
+[226/680] Generating ../../include/buffer_defs.h.inline.generated.h
+[227/680] Generating ../../include/buffer_updates.h.inline.generated.h
+[228/680] Generating ../../include/bufwrite.h.inline.generated.h
+[229/680] Generating ../../include/change.h.inline.generated.h
+[230/680] Generating ../../include/channel.h.inline.generated.h
+[231/680] Generating ../../include/channel_defs.h.inline.generated.h
+[232/680] Generating ../../include/clipboard.h.inline.generated.h
+[233/680] Generating ../../include/cmdexpand.h.inline.generated.h
+[234/680] Generating ../../include/cmdexpand_defs.h.inline.generated.h
+[235/680] Generating ../../include/context.h.inline.generated.h
+[236/680] Generating ../../include/cursor.h.inline.generated.h
+[237/680] Generating ../../include/cursor_shape.h.inline.generated.h
+[238/680] Generating ../../include/decoration.h.inline.generated.h
+[239/680] Generating ../../include/diff.h.inline.generated.h
+[240/680] Generating ../../include/debugger.h.inline.generated.h
+[241/680] Generating ../../include/digraph.h.inline.generated.h
+[242/680] Generating ../../include/charset.h.inline.generated.h
+[243/680] Generating ../../include/decoration_defs.h.inline.generated.h
+[244/680] Generating ../../include/decoration_provider.h.inline.generated.h
+[245/680] Generating ../../include/cmdhist.h.inline.generated.h
+[246/680] Generating ../../include/drawline.h.inline.generated.h
+[247/680] Generating ../../include/drawscreen.h.inline.generated.h
+[248/680] Generating ../../include/edit.h.inline.generated.h
+[249/680] Generating ../../include/errors.h.inline.generated.h
+[250/680] Generating ../../include/eval.h.inline.generated.h
+[251/680] Generating ../../include/eval/deprecated.h.inline.generated.h
+[252/680] Generating ../../include/eval/encode.h.inline.generated.h
+[253/680] Generating ../../include/eval/buffer.h.inline.generated.h
+[254/680] Generating ../../include/eval/decode.h.inline.generated.h
+[255/680] Generating ../../include/eval/fs.h.inline.generated.h
+[256/680] Generating ../../include/eval/executor.h.inline.generated.h
+[257/680] Generating ../../include/eval/funcs.h.inline.generated.h
+[258/680] Generating ../../include/eval/list.h.inline.generated.h
+[259/680] Generating ../../include/eval/gc.h.inline.generated.h
+[260/680] Generating ../../include/eval/typval.h.inline.generated.h
+[261/680] Generating ../../include/eval/userfunc.h.inline.generated.h
+[262/680] Generating ../../include/eval/typval_defs.h.inline.generated.h
+[263/680] Generating ../../include/eval/typval_encode.h.inline.generated.h
+[264/680] Generating ../../include/eval/vars.h.inline.generated.h
+[265/680] Generating ../../include/eval/window.h.inline.generated.h
+[266/680] Generating ../../include/event/defs.h.inline.generated.h
+[267/680] Generating ../../include/event/libuv_proc.h.inline.generated.h
+[268/680] Generating ../../include/eval_defs.h.inline.generated.h
+[269/680] Generating ../../include/event/loop.h.inline.generated.h
+[270/680] Generating ../../include/event/multiqueue.h.inline.generated.h
+[271/680] Generating ../../include/event/proc.h.inline.generated.h
+[272/680] Generating ../../include/event/rstream.h.inline.generated.h
+[273/680] Generating ../../include/event/signal.h.inline.generated.h
+[274/680] Generating ../../include/event/socket.h.inline.generated.h
+[275/680] Generating ../../include/event/stream.h.inline.generated.h
+[276/680] Generating ../../include/event/time.h.inline.generated.h
+[277/680] Generating ../../include/event/wstream.h.inline.generated.h
+[278/680] Generating ../../include/ex_cmds.h.inline.generated.h
+[279/680] Generating ../../include/ex_cmds2.h.inline.generated.h
+[280/680] Generating ../../include/ex_docmd.h.inline.generated.h
+[281/680] Generating ../../include/ex_eval.h.inline.generated.h
+[282/680] Generating ../../include/ex_cmds_defs.h.inline.generated.h
+[283/680] Generating ../../include/ex_getln.h.inline.generated.h
+[284/680] Generating ../../include/ex_eval_defs.h.inline.generated.h
+[285/680] Generating ../../include/ex_getln_defs.h.inline.generated.h
+[286/680] Generating ../../include/extmark.h.inline.generated.h
+[287/680] Generating ../../include/file_search.h.inline.generated.h
+[288/680] Generating ../../include/ex_session.h.inline.generated.h
+[289/680] Generating ../../include/extmark_defs.h.inline.generated.h
+[290/680] Generating ../../include/fileio.h.inline.generated.h
+[291/680] Generating ../../include/fold.h.inline.generated.h
+[292/680] Generating ../../include/func_attr.h.inline.generated.h
+[293/680] Generating ../../include/fuzzy.h.inline.generated.h
+[294/680] Generating ../../include/fold_defs.h.inline.generated.h
+[295/680] Generating ../../include/garray_defs.h.inline.generated.h
+[296/680] Generating ../../include/garray.h.inline.generated.h
+[297/680] Generating ../../include/getchar_defs.h.inline.generated.h
+[298/680] Generating ../../include/gettext_defs.h.inline.generated.h
+[299/680] Generating ../../include/getchar.h.inline.generated.h
+[300/680] Generating ../../include/globals.h.inline.generated.h
+[301/680] Generating ../../include/grid.h.inline.generated.h
+[302/680] Generating ../../include/hashtab.h.inline.generated.h
+[303/680] Generating ../../include/hashtab_defs.h.inline.generated.h
+[304/680] Generating ../../include/help.h.inline.generated.h
+[305/680] Generating ../../include/grid_defs.h.inline.generated.h
+[306/680] Generating ../../include/highlight.h.inline.generated.h
+[307/680] Generating ../../include/highlight_defs.h.inline.generated.h
+[308/680] Generating ../../include/highlight_group.h.inline.generated.h
+[309/680] Generating ../../include/indent.h.inline.generated.h
+[310/680] Generating ../../include/iconv_defs.h.inline.generated.h
+[311/680] Generating ../../include/indent_c.h.inline.generated.h
+[312/680] Generating ../../include/insexpand.h.inline.generated.h
+[313/680] Generating ../../include/input.h.inline.generated.h
+[314/680] Generating ../../include/keycodes.h.inline.generated.h
+[315/680] Generating ../../include/linematch.h.inline.generated.h
+[316/680] Generating ../../include/log.h.inline.generated.h
+[317/680] Generating ../../include/lib/queue_defs.h.inline.generated.h
+[318/680] Generating ../../include/lua/base64.h.inline.generated.h
+[319/680] Generating ../../include/lua/converter.h.inline.generated.h
+[320/680] Generating ../../include/lua/executor.h.inline.generated.h
+[321/680] Generating ../../include/lua/spell.h.inline.generated.h
+[322/680] Generating ../../include/lua/secure.h.inline.generated.h
+[323/680] Generating ../../include/lua/xdiff.h.inline.generated.h
+[324/680] Generating ../../include/lua/stdlib.h.inline.generated.h
+[325/680] Generating ../../include/lua/treesitter.h.inline.generated.h
+[326/680] Generating ../../include/macros_defs.h.inline.generated.h
+[327/680] Generating ../../include/main.h.inline.generated.h
+[328/680] Generating ../../include/map_defs.h.inline.generated.h
+[329/680] Generating ../../include/mapping.h.inline.generated.h
+[330/680] Generating ../../include/mapping_defs.h.inline.generated.h
+[331/680] Generating ../../include/mark.h.inline.generated.h
+[332/680] Generating ../../include/mark_defs.h.inline.generated.h
+[333/680] Generating ../../include/marktree.h.inline.generated.h
+[334/680] Generating ../../include/marktree_defs.h.inline.generated.h
+[335/680] Generating ../../include/match.h.inline.generated.h
+[336/680] Generating ../../include/math.h.inline.generated.h
+[337/680] Generating ../../include/mbyte.h.inline.generated.h
+[338/680] Generating ../../include/memfile.h.inline.generated.h
+[339/680] Generating ../../include/memfile_defs.h.inline.generated.h
+[340/680] Generating ../../include/mbyte_defs.h.inline.generated.h
+[341/680] Generating ../../include/memline.h.inline.generated.h
+[342/680] Generating ../../include/memline_defs.h.inline.generated.h
+[343/680] Generating ../../include/memory.h.inline.generated.h
+[344/680] Generating ../../include/memory_defs.h.inline.generated.h
+[345/680] Generating ../../include/menu.h.inline.generated.h
+[346/680] Generating ../../include/menu_defs.h.inline.generated.h
+[347/680] Generating ../../include/message_defs.h.inline.generated.h
+[348/680] Generating ../../include/message.h.inline.generated.h
+[349/680] Generating ../../include/mouse.h.inline.generated.h
+[350/680] Generating ../../include/move.h.inline.generated.h
+[351/680] Generating ../../include/msgpack_rpc/channel.h.inline.generated.h
+[352/680] Generating ../../include/msgpack_rpc/channel_defs.h.inline.generated.h
+[353/680] Generating ../../include/msgpack_rpc/packer.h.inline.generated.h
+[354/680] Generating ../../include/msgpack_rpc/unpacker.h.inline.generated.h
+[355/680] Generating ../../include/normal.h.inline.generated.h
+[356/680] Generating ../../include/msgpack_rpc/packer_defs.h.inline.generated.h
+[357/680] Generating ../../include/msgpack_rpc/server.h.inline.generated.h
+[358/680] Generating ../../include/normal_defs.h.inline.generated.h
+[359/680] Generating ../../include/ops.h.inline.generated.h
+[360/680] Generating ../../include/option.h.inline.generated.h
+[361/680] Generating ../../include/option_defs.h.inline.generated.h
+[362/680] Generating ../../include/option_vars.h.inline.generated.h
+[363/680] Generating ../../include/optionstr.h.inline.generated.h
+[364/680] Generating ../../include/os/dl.h.inline.generated.h
+[365/680] Generating ../../include/os/fileio.h.inline.generated.h
+[366/680] Generating ../../include/os/fs.h.inline.generated.h
+[367/680] Generating ../../include/os/fileio_defs.h.inline.generated.h
+[368/680] Generating ../../include/os/fs_defs.h.inline.generated.h
+[369/680] Generating ../../include/os/input.h.inline.generated.h
+[370/680] Generating ../../include/os/lang.h.inline.generated.h
+[371/680] Generating ../../include/os/os.h.inline.generated.h
+[372/680] Generating ../../include/os/os_defs.h.inline.generated.h
+[373/680] Generating ../../include/os/os_win_console.h.inline.generated.h
+[374/680] Generating ../../include/os/proc.h.inline.generated.h
+[375/680] Generating ../../include/os/pty_conpty_win.h.inline.generated.h
+[376/680] Generating ../../include/os/pty_proc.h.inline.generated.h
+[377/680] Generating ../../include/os/pty_proc_unix.h.inline.generated.h
+[378/680] Generating ../../include/os/shell.h.inline.generated.h
+[379/680] Generating ../../include/os/pty_proc_win.h.inline.generated.h
+[380/680] Generating ../../include/os/signal.h.inline.generated.h
+[381/680] Generating ../../include/os/time.h.inline.generated.h
+[382/680] Generating ../../include/os/time_defs.h.inline.generated.h
+[383/680] Generating ../../include/os/stdpaths_defs.h.inline.generated.h
+[384/680] Generating ../../include/os/unix_defs.h.inline.generated.h
+[385/680] Generating ../../include/profile.h.inline.generated.h
+[386/680] Generating ../../include/path.h.inline.generated.h
+[387/680] Generating ../../include/plines.h.inline.generated.h
+[388/680] Generating ../../include/popupmenu.h.inline.generated.h
+[389/680] Generating ../../include/pos_defs.h.inline.generated.h
+[390/680] Generating ../../include/quickfix.h.inline.generated.h
+[391/680] Generating ../../include/regexp.h.inline.generated.h
+[392/680] Generating ../../include/regexp_defs.h.inline.generated.h
+[393/680] Generating ../../include/register.h.inline.generated.h
+[394/680] Generating ../../include/runtime_defs.h.inline.generated.h
+[395/680] Generating ../../include/register_defs.h.inline.generated.h
+[396/680] Generating ../../include/sha256.h.inline.generated.h
+[397/680] Generating ../../include/sign.h.inline.generated.h
+[398/680] Generating ../../include/runtime.h.inline.generated.h
+[399/680] Generating ../../include/search.h.inline.generated.h
+[400/680] Generating ../../include/shada.h.inline.generated.h
+[401/680] Generating ../../include/spellfile.h.inline.generated.h
+[402/680] Generating ../../include/sign_defs.h.inline.generated.h
+[403/680] Generating ../../include/spell.h.inline.generated.h
+[404/680] Generating ../../include/spell_defs.h.inline.generated.h
+[405/680] Generating ../../include/spellsuggest.h.inline.generated.h
+[406/680] Generating ../../include/statusline_defs.h.inline.generated.h
+[407/680] Generating ../../include/state.h.inline.generated.h
+[408/680] Generating ../../include/state_defs.h.inline.generated.h
+[409/680] Generating ../../include/statusline.h.inline.generated.h
+[410/680] Generating ../../include/syntax.h.inline.generated.h
+[411/680] Generating ../../include/testing.h.inline.generated.h
+[412/680] Generating ../../include/strings.h.inline.generated.h
+[413/680] Generating ../../include/tag.h.inline.generated.h
+[414/680] Generating ../../include/terminal.h.inline.generated.h
+[415/680] Generating ../../include/textobject.h.inline.generated.h
+[416/680] Generating ../../include/syntax_defs.h.inline.generated.h
+[417/680] Generating ../../include/textformat.h.inline.generated.h
+[418/680] Generating ../../include/tui/input.h.inline.generated.h
+[419/680] Generating ../../include/tui/input_defs.h.inline.generated.h
+[420/680] Generating ../../include/tui/terminfo.h.inline.generated.h
+[421/680] Generating ../../include/tui/terminfo_defs.h.inline.generated.h
+[422/680] Generating ../../include/tui/terminfo_builtin.h.inline.generated.h
+[423/680] Generating ../../include/tui/terminfo_enum_defs.h.inline.generated.h
+[424/680] Generating ../../include/tui/termkey/driver-csi.h.inline.generated.h
+[425/680] Generating ../../include/tui/termkey/driver-ti.h.inline.generated.h
+[426/680] Generating ../../include/tui/termkey/termkey-internal.h.inline.generated.h
+[427/680] Generating ../../include/tui/termkey/termkey.h.inline.generated.h
+[428/680] Generating ../../include/tui/termkey/termkey_defs.h.inline.generated.h
+[429/680] Generating ../../include/tui/tui.h.inline.generated.h
+[430/680] Generating ../../include/tui/tui_defs.h.inline.generated.h
+[431/680] Generating ../../include/types_defs.h.inline.generated.h
+[432/680] Generating ../../include/ugrid.h.inline.generated.h
+[433/680] Generating ../../include/ui.h.inline.generated.h
+[434/680] Generating ../../include/undo_defs.h.inline.generated.h
+[435/680] Generating ../../include/ui_compositor.h.inline.generated.h
+[436/680] Generating ../../include/undo.h.inline.generated.h
+[437/680] Generating ../../include/usercmd.h.inline.generated.h
+[438/680] Generating ../../include/version.h.inline.generated.h
+[439/680] Generating ../../include/ui_defs.h.inline.generated.h
+[440/680] Generating ../../include/viml/parser/parser_defs.h.inline.generated.h
+[441/680] Generating ../../include/ui_client.h.inline.generated.h
+[442/680] Generating ../../include/viml/parser/expressions.h.inline.generated.h
+[443/680] Generating ../../include/viml/parser/parser.h.inline.generated.h
+[444/680] Generating ../../include/vim_defs.h.inline.generated.h
+[445/680] Generating ../../include/vterm/encoding.h.inline.generated.h
+[446/680] Generating ../../include/auevents_enum.generated.h, auto/auevents_name_map.generated.h
+[447/680] Generating ../../include/ex_cmds_enum.generated.h, auto/ex_cmds_defs.generated.h
+[448/680] Generating ../../include/vterm/screen.h.inline.generated.h
+[449/680] Generating ../../include/vterm/mouse.h.inline.generated.h
+[450/680] Generating ../../include/vterm/keyboard.h.inline.generated.h
+[451/680] Generating ../../include/vterm/pen.h.inline.generated.h
+[452/680] Generating ../../include/vterm/vterm.h.inline.generated.h
+[453/680] Generating ../../include/vterm/parser.h.inline.generated.h
+[454/680] Generating auto/keycode_names.generated.h
+[455/680] Generating ../../include/vterm/state.h.inline.generated.h
+[456/680] Generating ../../include/vterm/vterm_internal_defs.h.inline.generated.h
+[457/680] Generating ../../include/vterm/vterm_keycodes_defs.h.inline.generated.h
+[458/680] Generating ../../include/vterm/vterm_defs.h.inline.generated.h
+[459/680] Generating ../../cmake.config/auto/versiondef.h
+[460/680] Generating ../../include/window.h.inline.generated.h
+[461/680] Generating ../../include/winfloat.h.inline.generated.h
+[462/680] Generating auto/ui_events_call.generated.h, auto/ui_events_remote.generated.h, ../../ui_metadata.mpack, auto/ui_events_client.generated.h
+[463/680] Generating auto/version.c.generated.h, ../../include/version.h.generated.h
+[464/680] Generating auto/ui_events_client.c.generated.h, ../../include/ui_events_client.h.generated.h
+[465/680] Generating auto/ui_events_remote.c.generated.h, ../../include/ui_events_remote.h.generated.h
+[466/680] Generating auto/ui_events_call.c.generated.h, ../../include/ui_events_call.h.generated.h
+[467/680] Generating auto/api/private/dispatch_wrappers.generated.h, ../../exported_funcs_metadata.mpack, ../../eval_funcs_metadata.mpack, auto/lua_api_c_bindings.generated.h, auto/keysets_defs.generated.h
+[468/680] Generating auto/options.generated.h, auto/options_enum.generated.h, auto/options_map.generated.h, auto/option_vars.generated.h
+[469/680] Generating auto/api/private/api_metadata.generated.h
+[470/680] Generating auto/funcs.generated.h, ../../funcs_data.mpack
+[471/680] Generating auto/api/private/dispatch_wrappers.c.generated.h, ../../include/api/private/dispatch_wrappers.h.generated.h
+[472/680] Generating auto/lua/vim_module.generated.h
+[473/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/arabic.c.o
+[474/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/base64.c.o
+[475/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/brutal.c.o
+/home/michael/brutalvim/src/nvim/brutal.c: In function ‘brutal_init_keymap_hardest’:
+/home/michael/brutalvim/src/nvim/brutal.c:65:3: warning: ISO C forbids nested functions [-Wpedantic]
+   65 |   auto void shuffle_group( char *keys, int count ) {
+      |   ^~~~
+/home/michael/brutalvim/src/nvim/brutal.c:65:13: warning: function definition declared ‘auto’ [-Wpedantic]
+   65 |   auto void shuffle_group( char *keys, int count ) {
+      |             ^~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/brutal.c:81:3: warning: ISO C forbids nested functions [-Wpedantic]
+   81 |   auto void apply_shuffled_mapping( const char *original, const char *shuffled, int count ) {
+      |   ^~~~
+/home/michael/brutalvim/src/nvim/brutal.c:81:13: warning: function definition declared ‘auto’ [-Wpedantic]
+   81 |   auto void apply_shuffled_mapping( const char *original, const char *shuffled, int count ) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/brutal.c: At top level:
+/home/michael/brutalvim/src/nvim/brutal.c:112:6: warning: no previous prototype for ‘brutal_init’ [-Wmissing-prototypes]
+  112 | void brutal_init( void )
+      |      ^~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/brutal.c:120:6: warning: no previous prototype for ‘brutal_show_banner’ [-Wmissing-prototypes]
+  120 | void brutal_show_banner( void )
+      |      ^~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/brutal.c:208:6: warning: no previous prototype for ‘brutal_should_block_key’ [-Wmissing-prototypes]
+  208 | bool brutal_should_block_key( int c )
+      |      ^~~~~~~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/brutal.c:224:5: warning: no previous prototype for ‘brutal_apply_easy_mode_mappings’ [-Wmissing-prototypes]
+  224 | int brutal_apply_easy_mode_mappings( int c )
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/brutal.c:258:5: warning: no previous prototype for ‘brutal_remap_key’ [-Wmissing-prototypes]
+  258 | int brutal_remap_key( int c )
+      |     ^~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/brutal.c:268:6: warning: no previous prototype for ‘brutal_should_block_quit’ [-Wmissing-prototypes]
+  268 | bool brutal_should_block_quit( void )
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/brutal.c:276:6: warning: no previous prototype for ‘brutal_easy_mode_quit_check’ [-Wmissing-prototypes]
+  276 | bool brutal_easy_mode_quit_check( int c )
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/brutal.c:297:6: warning: no previous prototype for ‘brutal_easy_mode_esc_held’ [-Wmissing-prototypes]
+  297 | bool brutal_easy_mode_esc_held( void )
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/brutal.c:350:6: warning: no previous prototype for ‘brutal_check_easter_egg’ [-Wmissing-prototypes]
+  350 | bool brutal_check_easter_egg( void )
+      |      ^~~~~~~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/brutal.c:376:6: warning: no previous prototype for ‘brutal_record_char’ [-Wmissing-prototypes]
+  376 | void brutal_record_char( int c )
+      |      ^~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/brutal.c:396:6: warning: no previous prototype for ‘brutal_handle_esc_press’ [-Wmissing-prototypes]
+  396 | void brutal_handle_esc_press( void )
+      |      ^~~~~~~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/brutal.c:422:6: warning: no previous prototype for ‘brutal_check_triple_esc’ [-Wmissing-prototypes]
+  422 | bool brutal_check_triple_esc( void )
+      |      ^~~~~~~~~~~~~~~~~~~~~~~
+[476/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/__/test/unit/fixtures/multiqueue.c.o
+[477/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/private/validate.c.o
+[478/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/events.c.o
+[479/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/clipboard.c.o
+[480/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/options.c.o
+[481/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/buffer_updates.c.o
+[482/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/__/test/unit/fixtures/vterm_test.c.o
+[483/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/tabpage.c.o
+[484/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/window.c.o
+[485/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/context.c.o
+[486/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/cmdhist.c.o
+[487/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/vimscript.c.o
+[488/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/buffer.c.o
+[489/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/autocmd.c.o
+[490/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/charset.c.o
+[491/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/win_config.c.o
+[492/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/private/converter.c.o
+[493/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/arglist.c.o
+[494/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/extmark.c.o
+[495/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/cursor.c.o
+[496/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/command.c.o
+[497/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/cursor_shape.c.o
+[498/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/private/helpers.c.o
+[499/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/deprecated.c.o
+[500/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/channel.c.o
+[501/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/change.c.o
+[502/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval/gc.c.o
+[503/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/bufwrite.c.o
+[504/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/ui.c.o
+[505/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/debugger.c.o
+[506/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/autocmd.c.o
+[507/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/decoration_provider.c.o
+[508/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/vim.c.o
+[509/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval/deprecated.c.o
+[510/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval/executor.c.o
+[511/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/event/loop.c.o
+[512/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval/buffer.c.o
+[513/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/event/libuv_proc.c.o
+[514/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/cmdexpand.c.o
+[515/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/decoration.c.o
+[516/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval/decode.c.o
+[517/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/digraph.c.o
+[518/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/event/rstream.c.o
+[519/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/event/signal.c.o
+[520/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/event/multiqueue.c.o
+[521/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/event/time.c.o
+[522/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/event/proc.c.o
+[523/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/event/wstream.c.o
+[524/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval/list.c.o
+[525/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/event/stream.c.o
+[526/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval/window.c.o
+[527/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/buffer.c.o
+[528/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/event/socket.c.o
+[529/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/drawscreen.c.o
+[530/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/garray.c.o
+[531/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval/fs.c.o
+[532/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/hashtab.c.o
+[533/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval/encode.c.o
+[534/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/diff.c.o
+[535/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/edit.c.o
+[536/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/lua/base64.c.o
+[537/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/linematch.c.o
+[538/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/drawline.c.o
+[539/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/ex_eval.c.o
+[540/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/api/private/dispatch.c.o
+[541/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/ex_session.c.o
+[542/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/fuzzy.c.o
+[543/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/extmark.c.o
+[544/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/input.c.o
+[545/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/ex_cmds2.c.o
+[546/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval/typval.c.o
+[547/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/file_search.c.o
+[548/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval/vars.c.o
+[549/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/grid.c.o
+[550/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/keycodes.c.o
+[551/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/highlight.c.o
+[552/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/help.c.o
+[553/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/log.c.o
+[554/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval/userfunc.c.o
+[555/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/math.c.o
+[556/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/lua/spell.c.o
+[557/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/lua/secure.c.o
+[558/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/highlight_group.c.o
+[559/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/lua/xdiff.c.o
+[560/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/fold.c.o
+[561/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval.c.o
+[562/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/indent.c.o
+[563/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/map_glyph_cache.c.o
+[564/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/lua/stdlib.c.o
+[565/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/ex_cmds.c.o
+[566/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/map.c.o
+[567/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/lua/converter.c.o
+[568/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/getchar.c.o
+/home/michael/brutalvim/src/nvim/getchar.c: In function ‘vgetc’:
+/home/michael/brutalvim/src/nvim/getchar.c:1795:8: warning: implicit declaration of function ‘brutal_should_block_key’ [-Wimplicit-function-declaration]
+ 1795 |   if ( brutal_should_block_key( c ) ) {
+      |        ^~~~~~~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/getchar.c:1798:9: warning: implicit declaration of function ‘brutal_remap_key’ [-Wimplicit-function-declaration]
+ 1798 |     c = brutal_remap_key( c );  // Apply HARDEST mode randomization
+      |         ^~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/getchar.c:1799:9: warning: implicit declaration of function ‘brutal_apply_easy_mode_mappings’ [-Wimplicit-function-declaration]
+ 1799 |     c = brutal_apply_easy_mode_mappings( c );  // Apply EASY mode Windows-style mappings
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/getchar.c:1806:17: warning: implicit declaration of function ‘brutal_easy_mode_esc_held’ [-Wimplicit-function-declaration]
+ 1806 |     } else if ( brutal_easy_mode_esc_held() ) {
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/getchar.c:1818:3: warning: implicit declaration of function ‘brutal_record_char’ [-Wimplicit-function-declaration]
+ 1818 |   brutal_record_char( c );
+      |   ^~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/getchar.c:1821:8: warning: implicit declaration of function ‘brutal_check_easter_egg’ [-Wimplicit-function-declaration]
+ 1821 |   if ( brutal_check_easter_egg() ) {
+      |        ^~~~~~~~~~~~~~~~~~~~~~~
+[569/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/lua/treesitter.c.o
+[570/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/memfile.c.o
+[571/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/fileio.c.o
+[572/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/ex_getln.c.o
+[573/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/match.c.o
+[574/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/indent_c.c.o
+[575/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/eval/funcs.c.o
+[576/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/memory.c.o
+[577/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/dl.c.o
+[578/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/msgpack_rpc/server.c.o
+[579/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/msgpack_rpc/packer.c.o
+[580/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/mapping.c.o
+[581/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/mark.c.o
+[582/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/menu.c.o
+[583/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/msgpack_rpc/unpacker.c.o
+[584/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/mem.c.o
+[585/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/fileio.c.o
+[586/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/mouse.c.o
+[587/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/marktree.c.o
+[588/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/msgpack_rpc/channel.c.o
+[589/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/proc.c.o
+[590/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/main.c.o
+/home/michael/brutalvim/src/nvim/main.c: In function ‘main’:
+/home/michael/brutalvim/src/nvim/main.c:306:3: warning: implicit declaration of function ‘brutal_init’ [-Wimplicit-function-declaration]
+  306 |   brutal_init();
+      |   ^~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/main.c:423:3: warning: implicit declaration of function ‘brutal_show_banner’ [-Wimplicit-function-declaration]
+  423 |   brutal_show_banner();
+      |   ^~~~~~~~~~~~~~~~~~
+[591/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/mbyte.c.o
+[592/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/env.c.o
+[593/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/input.c.o
+[594/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/users.c.o
+[595/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/lua/api_wrappers.c.o
+[596/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/move.c.o
+[597/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/lang.c.o
+[598/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/signal.c.o
+[599/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/stdpaths.c.o
+[600/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/ex_docmd.c.o
+/home/michael/brutalvim/src/nvim/ex_docmd.c: In function ‘ex_quit’:
+/home/michael/brutalvim/src/nvim/ex_docmd.c:4775:8: warning: implicit declaration of function ‘brutal_should_block_quit’ [-Wimplicit-function-declaration]
+ 4775 |   if ( brutal_should_block_quit() ) {
+      |        ^~~~~~~~~~~~~~~~~~~~~~~~
+[601/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/fs.c.o
+[602/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/insexpand.c.o
+[603/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/lua/executor.c.o
+[604/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/time.c.o
+[605/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/memline.c.o
+[606/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/message.c.o
+[607/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/optionstr.c.o
+[608/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/pty_proc_unix.c.o
+[609/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/plines.c.o
+[610/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/os/shell.c.o
+[611/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/sha256.c.o
+[612/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/profile.c.o
+[613/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/path.c.o
+[614/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/ops.c.o
+[615/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/popupmenu.c.o
+[616/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/state.c.o
+[617/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/tui/termkey/driver-ti.c.o
+[618/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/tui/termkey/driver-csi.c.o
+[619/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/ugrid.c.o
+[620/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/testing.c.o
+[621/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/sign.c.o
+[622/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/register.c.o
+[623/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/tui/input.c.o
+[624/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/tui/termkey/termkey.c.o
+[625/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/runtime.c.o
+[626/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/normal.c.o
+/home/michael/brutalvim/src/nvim/normal.c: In function ‘nv_zet’:
+/home/michael/brutalvim/src/nvim/normal.c:2826:10: warning: implicit declaration of function ‘brutal_should_block_quit’ [-Wimplicit-function-declaration]
+ 2826 |     if ( brutal_should_block_quit() && nchar == 'z' ) {
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/normal.c: In function ‘nv_esc’:
+/home/michael/brutalvim/src/nvim/normal.c:6153:3: warning: implicit declaration of function ‘brutal_handle_esc_press’ [-Wimplicit-function-declaration]
+ 6153 |   brutal_handle_esc_press();
+      |   ^~~~~~~~~~~~~~~~~~~~~~~
+/home/michael/brutalvim/src/nvim/normal.c:6156:8: warning: implicit declaration of function ‘brutal_check_triple_esc’ [-Wimplicit-function-declaration]
+ 6156 |   if ( brutal_check_triple_esc() ) {
+      |        ^~~~~~~~~~~~~~~~~~~~~~~
+[627/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/tui/terminfo.c.o
+[628/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/strings.c.o
+[629/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/vterm/encoding.c.o
+[630/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/ui_client.c.o
+[631/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/textformat.c.o
+[632/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/viml/parser/parser.c.o
+[633/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/terminal.c.o
+[634/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/textobject.c.o
+[635/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/vterm/pen.c.o
+[636/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/ui_compositor.c.o
+[637/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/search.c.o
+[638/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/option.c.o
+[639/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/spellsuggest.c.o
+[640/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/vterm/keyboard.c.o
+[641/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/cjson/fpconv.c.o
+[642/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/statusline.c.o
+[643/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/mpack/conv.c.o
+[644/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/spell.c.o
+[645/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/vterm/parser.c.o
+[646/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/mpack/object.c.o
+[647/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/cjson/strbuf.c.o
+[648/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/tag.c.o
+[649/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/mpack/rpc.c.o
+[650/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/shada.c.o
+[651/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/vterm/vterm.c.o
+[652/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/vterm/mouse.c.o
+[653/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/mpack/mpack_core.c.o
+[654/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/version.c.o
+[655/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/xdiff/xemit.c.o
+[656/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/xdiff/xdiffi.c.o
+[657/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/mpack/lmpack.c.o
+[658/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/xdiff/xpatience.c.o
+[659/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/tui/tui.c.o
+[660/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/xdiff/xhistogram.c.o
+[661/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/vterm/screen.c.o
+[662/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/xdiff/xutils.c.o
+[663/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/xdiff/xprepare.c.o
+[664/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/ui.c.o
+[665/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/usercmd.c.o
+[666/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/undo.c.o
+[667/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/spellfile.c.o
+[668/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/syntax.c.o
+[669/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/quickfix.c.o
+[670/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/winfloat.c.o
+[671/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/vterm/state.c.o
+[672/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/__/cjson/lua_cjson.c.o
+[673/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/viml/parser/expressions.c.o
+[674/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/regexp.c.o
+[675/680] Building C object src/nvim/CMakeFiles/nvim_bin.dir/window.c.o
+[676/680] Linking C executable bin/nvim
+/home/michael/brutalvim/src/nvim/normal.c:6156:8: warning: type of ‘brutal_check_triple_esc’ does not match original declaration [-Wlto-type-mismatch]
+ 6156 |   if ( brutal_check_triple_esc() ) {
+      |        ^
+/home/michael/brutalvim/src/nvim/brutal.c:422:6: note: return value type mismatch
+  422 | bool brutal_check_triple_esc( void )
+      |      ^
+/home/michael/brutalvim/src/nvim/brutal.c:422:6: note: type ‘_Bool’ should match type ‘int’
+/home/michael/brutalvim/src/nvim/brutal.c:422:6: note: ‘brutal_check_triple_esc’ was previously declared here
+/home/michael/brutalvim/src/nvim/brutal.c:422:6: note: code may be misoptimized unless ‘-fno-strict-aliasing’ is used
+/home/michael/brutalvim/src/nvim/getchar.c:1821:8: warning: type of ‘brutal_check_easter_egg’ does not match original declaration [-Wlto-type-mismatch]
+ 1821 |   if ( brutal_check_easter_egg() ) {
+      |        ^
+/home/michael/brutalvim/src/nvim/brutal.c:350:6: note: return value type mismatch
+  350 | bool brutal_check_easter_egg( void )
+      |      ^
+/home/michael/brutalvim/src/nvim/brutal.c:350:6: note: type ‘_Bool’ should match type ‘int’
+/home/michael/brutalvim/src/nvim/brutal.c:350:6: note: ‘brutal_check_easter_egg’ was previously declared here
+/home/michael/brutalvim/src/nvim/brutal.c:350:6: note: code may be misoptimized unless ‘-fno-strict-aliasing’ is used
+/home/michael/brutalvim/src/nvim/getchar.c:1806:17: warning: type of ‘brutal_easy_mode_esc_held’ does not match original declaration [-Wlto-type-mismatch]
+ 1806 |     } else if ( brutal_easy_mode_esc_held() ) {
+      |                 ^
+/home/michael/brutalvim/src/nvim/brutal.c:297:6: note: return value type mismatch
+  297 | bool brutal_easy_mode_esc_held( void )
+      |      ^
+/home/michael/brutalvim/src/nvim/brutal.c:297:6: note: type ‘_Bool’ should match type ‘int’
+/home/michael/brutalvim/src/nvim/brutal.c:297:6: note: ‘brutal_easy_mode_esc_held’ was previously declared here
+/home/michael/brutalvim/src/nvim/brutal.c:297:6: note: code may be misoptimized unless ‘-fno-strict-aliasing’ is used
+/home/michael/brutalvim/src/nvim/ex_docmd.c:4775:8: warning: type of ‘brutal_should_block_quit’ does not match original declaration [-Wlto-type-mismatch]
+ 4775 |   if ( brutal_should_block_quit() ) {
+      |        ^
+/home/michael/brutalvim/src/nvim/brutal.c:268:6: note: return value type mismatch
+  268 | bool brutal_should_block_quit( void )
+      |      ^
+/home/michael/brutalvim/src/nvim/brutal.c:268:6: note: type ‘_Bool’ should match type ‘int’
+/home/michael/brutalvim/src/nvim/brutal.c:268:6: note: ‘brutal_should_block_quit’ was previously declared here
+/home/michael/brutalvim/src/nvim/brutal.c:268:6: note: code may be misoptimized unless ‘-fno-strict-aliasing’ is used
+/home/michael/brutalvim/src/nvim/getchar.c:1795:8: warning: type of ‘brutal_should_block_key’ does not match original declaration [-Wlto-type-mismatch]
+ 1795 |   if ( brutal_should_block_key( c ) ) {
+      |        ^
+/home/michael/brutalvim/src/nvim/brutal.c:208:6: note: return value type mismatch
+  208 | bool brutal_should_block_key( int c )
+      |      ^
+/home/michael/brutalvim/src/nvim/brutal.c:208:6: note: type ‘_Bool’ should match type ‘int’
+/home/michael/brutalvim/src/nvim/brutal.c:208:6: note: ‘brutal_should_block_key’ was previously declared here
+/home/michael/brutalvim/src/nvim/brutal.c:208:6: note: code may be misoptimized unless ‘-fno-strict-aliasing’ is used
+[677/680] Generating syntax/vim/generated.vim

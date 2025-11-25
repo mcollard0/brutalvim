@@ -13,11 +13,36 @@ BrutalVim extends Neovim with four difficulty modes that modify editor behavior 
 ## Features
 
 ### 🟢 EASY Mode (`--easy`)
-Perfect for beginners transitioning from other editors.
-- **Windows-style shortcuts**: Ctrl+Z (undo), Ctrl+C/X/V (copy/cut/paste)
-- **Multiple quit options**: Hold ESC for 5 seconds, or triple-press Ctrl+X/C/Q
-- **Easter egg**: Type "fuck you let me out" with Levenshtein distance tolerance
-- Arrow keys enabled for comfortable navigation
+Perfect for beginners transitioning from other editors. Makes Vim feel like a modern editor while gently introducing modal concepts.
+
+**Navigation & Selection (Like Windows/Mac/VSCode):**
+- **Arrow keys**: Character-wise movement in all directions
+- **Ctrl+Arrow**: Word-wise jumping (left/right by word)
+- **Shift+Arrow**: Character-wise text selection (starts visual mode automatically)
+- **Ctrl+Shift+Arrow**: Word-wise text selection (bonus combo!)
+
+**Windows-Style Editing Shortcuts:**
+- **Ctrl+Z**: Undo (maps to `u`)
+- **Ctrl+C**: Copy selected text (works in visual mode)
+- **Ctrl+X**: Cut selected text (works in visual mode)
+- **Ctrl+V**: Paste (use `"*p` or `"+p` for system clipboard)
+
+**Easy Exit Options (No More :q! Confusion):**
+- Hold `ESC` for 5 seconds → Quit with save prompt
+- Press `ESC` three times within 5 seconds → Quit prompt
+- Triple-press `Ctrl+X`, `Ctrl+C`, or `Ctrl+Q` → Quit prompt
+- **Easter egg**: Type "fuck you let me out" anywhere → Instant quit!
+
+**Quick Start Workflow:**
+```bash
+nvim --easy myfile.txt
+# 1. Press 'i' to insert text
+# 2. Type your content
+# 3. Press ESC to return to normal mode
+# 4. Use Shift+Arrow to select text
+# 5. Press Ctrl+C to copy, Ctrl+X to cut
+# 6. Hold ESC for 5 seconds to quit
+```
 
 ### 🟡 HARD Mode (`--hard`)
 Forces proper Vim navigation habits.

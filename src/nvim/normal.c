@@ -1249,6 +1249,26 @@ static int normal_execute(VimState *state, int key)
   }
 
   // Execute the command!
+  // BrutalVim EASY mode: Intercept Ctrl+C/X/V and Enter for clipboard operations
+  if ( brutal_mode == BRUTAL_EASY ) {
+    if ( VIsual_active && ( s->ca.cmdchar == Ctrl_C || s->ca.cmdchar == CAR ) ) {
+      // Ctrl+C or Enter in visual mode: Copy to clipboard and exit visual
+      s->ca.oap->regname = '+';
+      s->ca.cmdchar = 'y';
+      s->idx = find_command( 'y' );
+    } else if ( VIsual_active && s->ca.cmdchar == Ctrl_X ) {
+      // Ctrl+X in visual mode: Cut to clipboard
+      s->ca.oap->regname = '+';
+      s->ca.cmdchar = 'd';
+      s->idx = find_command( 'd' );
+      } else if ( !VIsual_active && s->ca.cmdchar == Ctrl_V && s->oa.op_type == OP_NOP ) {
+        s->ca.oap->regname = '+';
+        s->ca.cmdchar = 'g';
+        s->ca.nchar = 'p';
+        s->idx = find_command( 'g' );
+    }
+  }
+  
   // Call the command function found in the commands table.
   s->ca.arg = nv_cmds[s->idx].cmd_arg;
   (nv_cmds[s->idx].cmd_func)(&s->ca);

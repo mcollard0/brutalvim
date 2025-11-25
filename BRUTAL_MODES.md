@@ -24,6 +24,8 @@ Perfect for beginners or those transitioning from other editors.
 - `Ctrl+C` → Copy (works in visual mode)
 - `Ctrl+X` → Cut (works in visual mode)
 - `Ctrl+V` → Paste (use `"*p` or `"+p` for system clipboard)
+- `Shift+Arrow keys` → Select text (like most modern editors)
+- `Ctrl+Arrow keys` → Move by word (like most modern editors)
 
 **Easy Quit Options:**
 - Hold `ESC` for 5 seconds → Quit
@@ -40,6 +42,14 @@ Perfect for beginners or those transitioning from other editors.
 
 **Copying and Pasting:**
 ```
+Method 1 (Easy - like other editors):
+1. Hold Shift and use Arrow keys to select text
+   (Tip: Use Ctrl+Shift+Arrow for word-wise selection!)
+2. Press Ctrl+C to copy (or Ctrl+X to cut)
+3. Move cursor to destination (use Ctrl+Arrow to jump by word)
+4. Press Ctrl+V to paste
+
+Method 2 (Vim-style):
 1. Press 'v' to enter visual mode
 2. Move cursor to select text
 3. Press Ctrl+C to copy
@@ -142,8 +152,11 @@ Good luck! Figure it out yourself.
 ## Tips and Tricks
 
 ### For EASY Mode Users:
-- Use visual mode ( v ) before Ctrl+C/X for better results
-- System clipboard paste: `"*p` or `"+p`
+- Use Shift+Arrow keys for familiar text selection (like Windows/Mac)
+- Use Ctrl+Arrow to jump between words quickly
+- Use Ctrl+Shift+Arrow for word-wise selection
+- Or use visual mode ( v ) before Ctrl+C/X for Vim-style selection
+- System clipboard paste: `"*p` or `"+p`, or use Ctrl+V
 - The ESC-hold-to-quit is great for quick exits
 
 ### For HARD/HARDER Mode Users:
@@ -172,6 +185,8 @@ Good luck! Figure it out yourself.
 | Feature | EASY | HARD | HARDER | HARDEST |
 |---------|------|------|--------|---------|
 | Arrow keys | ✓ Enabled | ✗ Disabled | ✗ Disabled | ✗ Disabled |
+| Ctrl+Arrow (word jump) | ✓ Enabled | ✗ Disabled | ✗ Disabled | ✗ Disabled |
+| Shift+Arrow selection | ✓ Enabled | ✗ Disabled | ✗ Disabled | ✗ Disabled |
 | Ctrl+Z undo | ✓ Enabled | Standard u | Standard u | Randomized |
 | Windows shortcuts | ✓ Enabled | ✗ Disabled | ✗ Disabled | ✗ Disabled |
 | Easy quit | ✓ Multiple ways | Standard :q | ✗ Blocked | ✗ Blocked |
