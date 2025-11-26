@@ -32,6 +32,25 @@ int brutal_esc_press_count = 0;
 char brutal_easter_egg_buffer[32] = {0};
 int brutal_easter_egg_pos = 0;
 
+/// Shuffle a character array in-place using Fisher-Yates algorithm
+static void brutal_shuffle_group( char *keys, int count )
+{
+  for ( int i = count - 1; i > 0; i-- ) {
+    int j = rand() % ( i + 1 );
+    char temp = keys[i];
+    keys[i] = keys[j];
+    keys[j] = temp;
+  }
+}
+
+/// Apply shuffled mapping to brutal_keymap
+static void brutal_apply_shuffled_mapping( const char *original, const char *shuffled, int count )
+{
+  for ( int i = 0; i < count; i++ ) {
+    brutal_keymap[( uint8_t )original[i]] = ( uint8_t )shuffled[i];
+  }
+}
+
 /// Initialize brutal mode keybinding randomization for HARDEST mode
 /// Uses logical replacement groups to maintain some usability
 static void brutal_init_keymap_hardest( void )
@@ -68,28 +87,13 @@ static void brutal_init_keymap_hardest( void )
   srand( ( unsigned int )time( NULL ) );
 
   // Shuffle each group using Fisher-Yates algorithm
-  auto void shuffle_group( char *keys, int count ) {
-    for ( int i = count - 1; i > 0; i-- ) {
-      int j = rand() % ( i + 1 );
-      char temp = keys[i];
-      keys[i] = keys[j];
-      keys[j] = temp;
-    }
-  }
-
-  shuffle_group( motion_keys, motion_count );
-  shuffle_group( edit_keys, edit_count );
-  shuffle_group( visual_keys, visual_count );
-  shuffle_group( search_keys, search_count );
-  shuffle_group( mark_keys, mark_count );
+  brutal_shuffle_group( motion_keys, motion_count );
+  brutal_shuffle_group( edit_keys, edit_count );
+  brutal_shuffle_group( visual_keys, visual_count );
+  brutal_shuffle_group( search_keys, search_count );
+  brutal_shuffle_group( mark_keys, mark_count );
 
   // Apply shuffled mappings
-  auto void apply_shuffled_mapping( const char *original, const char *shuffled, int count ) {
-    for ( int i = 0; i < count; i++ ) {
-      brutal_keymap[( uint8_t )original[i]] = ( uint8_t )shuffled[i];
-    }
-  }
-
   char motion_original[] = { 'h', 'j', 'k', 'l', 'w', 'b', 'e', 'W', 'B', 'E',
                              '0', '^', '$', 'G', 'g', 'f', 'F', 't', 'T', '%' };
   char edit_original[] = { 'i', 'a', 'o', 'O', 'I', 'A', 'c', 'd', 'y', 'p', 'P',
@@ -98,11 +102,11 @@ static void brutal_init_keymap_hardest( void )
   char search_original[] = { '/', '?', 'n', 'N', '*', '#' };
   char mark_original[] = { 'm', '\'', '`' };
 
-  apply_shuffled_mapping( motion_original, motion_keys, motion_count );
-  apply_shuffled_mapping( edit_original, edit_keys, edit_count );
-  apply_shuffled_mapping( visual_original, visual_keys, visual_count );
-  apply_shuffled_mapping( search_original, search_keys, search_count );
-  apply_shuffled_mapping( mark_original, mark_keys, mark_count );
+  brutal_apply_shuffled_mapping( motion_original, motion_keys, motion_count );
+  brutal_apply_shuffled_mapping( edit_original, edit_keys, edit_count );
+  brutal_apply_shuffled_mapping( visual_original, visual_keys, visual_count );
+  brutal_apply_shuffled_mapping( search_original, search_keys, search_count );
+  brutal_apply_shuffled_mapping( mark_original, mark_keys, mark_count );
 
   // Randomize remaining common keys (numbers, some punctuation)
   char other_keys[] = { '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -110,8 +114,8 @@ static void brutal_init_keymap_hardest( void )
   int other_count = sizeof( other_keys ) / sizeof( other_keys[0] );
   char other_shuffled[sizeof( other_keys )];
   memcpy( other_shuffled, other_keys, sizeof( other_keys ) );
-  shuffle_group( other_shuffled, other_count );
-  apply_shuffled_mapping( other_keys, other_shuffled, other_count );
+  brutal_shuffle_group( other_shuffled, other_count );
+  brutal_apply_shuffled_mapping( other_keys, other_shuffled, other_count );
 }
 
 /// Initialize brutal mode system
@@ -167,11 +171,13 @@ void brutal_copy_to_system_clipboard( const char *text )
   };
 #endif
   for (int i = 0; cmds[i] != NULL; i++) {
-    FILE *p = popen(cmds[i], "w 2>/dev/null");
+    FILE *p = popen(cmds[i], "w");
     if (p) {
       fwrite(text, 1, strlen(text), p);
       int rc = pclose(p);
-      if (rc == 0 || rc == 256) {  // 256 = command not found, treat as success to avoid error messages
+      // Success on rc == 0; non-zero usually means command not found,
+      // which is OK if we have more commands to try
+      if (rc == 0) {
         return;
       }
     }
@@ -200,7 +206,7 @@ char *brutal_paste_from_system_clipboard( void )
   };
 #endif
   for (int i = 0; cmds[i] != NULL; i++) {
-    FILE *p = popen(cmds[i], "r 2>/dev/null");
+    FILE *p = popen(cmds[i], "r");
     if (p) {
       size_t cap = 0, len = 0;
       char *out = NULL;
