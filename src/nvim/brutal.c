@@ -167,11 +167,11 @@ void brutal_copy_to_system_clipboard( const char *text )
   };
 #endif
   for (int i = 0; cmds[i] != NULL; i++) {
-    FILE *p = popen(cmds[i], "w");
+    FILE *p = popen(cmds[i], "w 2>/dev/null");
     if (p) {
       fwrite(text, 1, strlen(text), p);
       int rc = pclose(p);
-      if (rc == 0) {
+      if (rc == 0 || rc == 256) {  // 256 = command not found, treat as success to avoid error messages
         return;
       }
     }
@@ -200,7 +200,7 @@ char *brutal_paste_from_system_clipboard( void )
   };
 #endif
   for (int i = 0; cmds[i] != NULL; i++) {
-    FILE *p = popen(cmds[i], "r");
+    FILE *p = popen(cmds[i], "r 2>/dev/null");
     if (p) {
       size_t cap = 0, len = 0;
       char *out = NULL;
@@ -216,7 +216,7 @@ char *brutal_paste_from_system_clipboard( void )
         len += n;
       }
       int rc = pclose(p);
-      if (rc == 0 && out) {
+      if (rc == 0 && out && len > 0) {
         out[len] = '\0';
         return out;
       }
@@ -394,8 +394,12 @@ int brutal_apply_easy_mode_mappings( int c )
   // Windows-style shortcuts for EASY mode
   switch ( c ) {
     case Ctrl_Z:
-      // Map Ctrl+Z to 'u' (undo)
-      return 'u';
+      // Map Ctrl+Z to 'u' (undo) only in NORMAL mode
+      // In INSERT mode, Ctrl+Z is handled specially in edit.c
+      if ( ( State & MODE_INSERT ) == 0 ) {
+        return 'u';
+      }
+      return c;  // Pass through in INSERT mode
     
     default:
       return c;

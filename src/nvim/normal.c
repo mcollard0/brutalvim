@@ -1233,6 +1233,13 @@ static int normal_execute(VimState *state, int key)
 
   s->old_pos = curwin->w_cursor;           // remember where the cursor was
 
+  // BrutalVim EASY mode: Remember if we're starting selection at column 0
+  bool brutal_started_at_col0 = false;
+  if ( brutal_mode == BRUTAL_EASY && !VIsual_active && km_startsel &&
+       curwin->w_cursor.col == 0 ) {
+    brutal_started_at_col0 = true;
+  }
+
   // When 'keymodel' contains "startsel" some keys start Select/Visual
   // mode.
   if (!VIsual_active && km_startsel) {
@@ -1250,18 +1257,21 @@ static int normal_execute(VimState *state, int key)
 
   // Execute the command!
   // BrutalVim EASY mode: Intercept Ctrl+C/X/V and Enter for clipboard operations
-  pos_T brutal_saved_cursor;
-  bool brutal_restore_cursor = false;
   bool brutal_was_insert_mode = false;
+  int brutal_saved_restart_edit = 0;
   if ( brutal_mode == BRUTAL_EASY ) {
+    // Check if we should preserve INSERT mode (for copy/cut/paste operations)
+    // VIsual_reselect indicates we came from INSERT mode via shift-selection
+    if ( VIsual_active || restart_edit != 0 || VIsual_reselect ) {
+      brutal_was_insert_mode = true;
+      brutal_saved_restart_edit = restart_edit;  // Save current restart_edit value
+    }
+    
     if ( VIsual_active && ( s->ca.cmdchar == Ctrl_C || s->ca.cmdchar == CAR ) ) {
       // Ctrl+C or Enter in visual mode: Copy; also sync to system clipboard if provider missing
       s->ca.oap->regname = '0';
       s->ca.cmdchar = 'y';
       s->idx = find_command( 'y' );
-      // mark for post-op sync
-      brutal_restore_cursor = brutal_restore_cursor; // no-op to keep flags grouped
-      s->ca.retval |= 0;
     } else if ( VIsual_active && s->ca.cmdchar == Ctrl_X ) {
       // Ctrl+X in visual mode: Cut; also sync to system clipboard if provider missing
       s->ca.oap->regname = '0';
@@ -1276,20 +1286,29 @@ static int normal_execute(VimState *state, int key)
           xfree(sys);
         }
       }
-      if ( restart_edit != 0 ) {
-        brutal_was_insert_mode = true;
-      }
-      brutal_saved_cursor = curwin->w_cursor;
-      brutal_restore_cursor = true;
-      s->ca.oap->regname = '0';
-      s->ca.cmdchar = 'p';
-      s->idx = find_command( 'p' );
+      // Directly call do_put with register '0'
+      do_put( '0', NULL, FORWARD, 1, 0 );
+      // Position cursor at the end of the current line (after pasted text)
+      curwin->w_cursor.col = get_cursor_line_len();
+      s->command_finished = true;
+    } else {
+      // For other operations, don't preserve INSERT mode
+      brutal_was_insert_mode = false;
     }
   }
   
   // Call the command function found in the commands table.
   s->ca.arg = nv_cmds[s->idx].cmd_arg;
   (nv_cmds[s->idx].cmd_func)(&s->ca);
+  
+  // BrutalVim EASY mode: Fix column position after vertical movement with Shift
+  // When starting selection at column 0, keep cursor at column 0
+  if ( brutal_started_at_col0 && VIsual_active &&
+       ( s->ca.cmdchar == K_DOWN || s->ca.cmdchar == K_UP ) &&
+       curwin->w_cursor.col != 0 && s->old_pos.lnum != curwin->w_cursor.lnum ) {
+    curwin->w_cursor.col = 0;
+    curwin->w_curswant = 0;
+  }
   
   // BrutalVim EASY mode: After command, for copy operations sync to system clipboard
   if ( brutal_mode == BRUTAL_EASY ) {
@@ -1304,14 +1323,21 @@ static int normal_execute(VimState *state, int key)
         brutal_copy_to_system_clipboard(txt);
         xfree(txt);
       }
+      // IMPORTANT: For delete operations, Vim's shift_delete_registers() sets y_previous
+      // to register '1'. We need to set it back to register '0' so paste uses the right register.
+      if (s->ca.cmdchar == 'd') {
+        op_reg_set_previous('0');
+      }
     }
   }
 
-  // BrutalVim EASY mode: Restore cursor position and mode after Ctrl+V paste
-  if ( brutal_restore_cursor ) {
-    curwin->w_cursor = brutal_saved_cursor;
+  // BrutalVim EASY mode: Restore INSERT mode after clipboard operations
+  if ( brutal_mode == BRUTAL_EASY ) {
+    // Restore INSERT mode for all copy/cut/paste operations if we were in INSERT mode
     if ( brutal_was_insert_mode ) {
-      restart_edit = 'a';
+      // Force restart_edit to ensure we return to INSERT mode
+      // Use saved value if it was set, otherwise use 'a' to resume after cursor
+      restart_edit = brutal_saved_restart_edit ? brutal_saved_restart_edit : 'a';
     }
   }
 

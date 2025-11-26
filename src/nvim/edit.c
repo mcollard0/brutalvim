@@ -47,6 +47,7 @@
 #include "nvim/macros_defs.h"
 #include "nvim/mapping.h"
 #include "nvim/mark.h"
+#include "nvim/brutal.h"
 #include "nvim/mark_defs.h"
 #include "nvim/marktree_defs.h"
 #include "nvim/mbyte.h"
@@ -700,6 +701,29 @@ static int insert_execute(VimState *state, int key)
     return 1;
   }
 
+  // BrutalVim EASY mode: Ctrl+V pastes from clipboard in INSERT mode
+  if ( brutal_mode == BRUTAL_EASY && s->c == Ctrl_V ) {
+    // Fetch from system clipboard if available
+    char *sys = brutal_paste_from_system_clipboard();
+    if (sys) {
+      brutal_set_reg0_from_text(sys);
+      xfree(sys);
+    }
+    // Paste register 0 content - cursor will naturally end at the end of pasted text
+    const yankreg_T *r = op_reg_get('0');
+    if (r && r->y_size > 0) {
+      for (size_t i = 0; i < r->y_size; i++) {
+        if (i > 0) {
+          ins_eol( Ctrl_J );
+        }
+        for (size_t j = 0; j < r->y_array[i].size; j++) {
+          ins_char( r->y_array[i].data[j] );
+        }
+      }
+    }
+    return 1;  // continue, cursor is now at end of pasted text
+  }
+
   if (s->c == Ctrl_V || s->c == Ctrl_Q) {
     ins_ctrl_v();
     s->c = Ctrl_V;       // pretend CTRL-V is last typed character
@@ -785,6 +809,17 @@ static int insert_handle_key(InsertState *s)
     return 0;  // exit insert mode
 
   case Ctrl_Z:
+    // BrutalVim EASY mode: Ctrl+Z performs undo
+    if ( brutal_mode == BRUTAL_EASY ) {
+      // Use Ctrl+O mechanism to execute one normal command ('u' for undo)
+      // This will temporarily exit insert mode, execute undo, then return
+      ins_ctrl_o();
+      ins_at_eol = false;
+      s->nomove = true;
+      stuffcharReadbuff( 'u' );  // Stuff 'u' to execute undo in normal mode
+      s->count = 0;
+      return 0;  // exit insert mode temporarily
+    }
     goto normalchar;                // insert CTRL-Z as normal char
 
   case Ctrl_O:        // execute one command
