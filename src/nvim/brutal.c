@@ -163,10 +163,10 @@ void brutal_copy_to_system_clipboard( const char *text )
   const char *cmds[] = { "pbcopy", NULL };
 #else
   const char *cmds[] = {
-    "wl-copy",
-    "xclip -selection clipboard -i",
-    "xsel --clipboard --input",
-    "clip.exe", // WSL fallback
+    "wl-copy 2>/dev/null",
+    "xclip -selection clipboard -i 2>/dev/null",
+    "xsel --clipboard --input 2>/dev/null",
+    "clip.exe 2>/dev/null",
     NULL
   };
 #endif
@@ -193,15 +193,15 @@ char *brutal_paste_from_system_clipboard( void )
     return NULL; // Let provider path handle it
   }
 #if defined(_WIN32)
-  const char *cmds[] = { "powershell.exe -command Get-Clipboard", NULL };
+  const char *cmds[] = { "powershell.exe -command Get-Clipboard 2>nul", NULL };
 #elif defined(__APPLE__)
   const char *cmds[] = { "pbpaste", NULL };
 #else
   const char *cmds[] = {
-    "wl-paste",
-    "xclip -selection clipboard -o",
-    "xsel --clipboard --output",
-    "powershell.exe -command Get-Clipboard", // WSL fallback
+    "wl-paste 2>/dev/null",
+    "xclip -selection clipboard -o 2>/dev/null",
+    "xsel --clipboard --output 2>/dev/null",
+    "powershell.exe -command Get-Clipboard 2>/dev/null",
     NULL
   };
 #endif
