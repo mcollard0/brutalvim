@@ -78,6 +78,7 @@
 #include "nvim/ui_defs.h"
 #include "nvim/undo.h"
 #include "nvim/vim_defs.h"
+#include "nvim/brutal.h"
 
 #include "ops.c.generated.h"
 
@@ -3681,6 +3682,14 @@ void do_pending_operator(cmdarg_T *cap, int old_col, bool gui_yank)
         restore_lbr(lbr_saved);
         oap->excl_tr_ws = cap->cmdchar == 'z';
         op_yank(oap, !gui_yank);
+        // BrutalVim EASY mode: sync yanked content to system clipboard
+        if (brutal_mode == BRUTAL_EASY) {
+          char *reg0_text = brutal_get_reg0_as_text();
+          if (reg0_text) {
+            brutal_copy_to_system_clipboard(reg0_text);
+            xfree(reg0_text);
+          }
+        }
       }
       check_cursor_col(curwin);
       break;
