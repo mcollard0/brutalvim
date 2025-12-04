@@ -1799,19 +1799,9 @@ int vgetc(void)
     c = brutal_apply_easy_mode_mappings( c );  // Apply EASY mode Windows-style mappings
   }
   
-  // EASY mode: Track ESC hold for 5-second quit
+  // EASY mode: Track ESC presses (unused for now, kept for compatibility)
   if ( c == ESC && brutal_mode == BRUTAL_EASY ) {
-    if ( brutal_esc_hold_start == 0 ) {
-      brutal_esc_hold_start = os_hrtime();
-    } else if ( brutal_easy_mode_esc_held() ) {
-      // ESC held for 5 seconds - quit
-      brutal_esc_hold_start = 0;
-      do_cmdline_cmd( "confirm qa" );
-      c = K_IGNORE;
-    }
-  } else if ( c != ESC ) {
-    // Reset ESC hold timer when any other key pressed
-    brutal_esc_hold_start = 0;
+    brutal_esc_hold_start = os_hrtime();  // Track last ESC time
   }
   
   // Record character for easter egg detection

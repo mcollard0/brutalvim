@@ -2823,7 +2823,7 @@ static void nv_zet(cmdarg_T *cap)
 
   case 'z':
     // Brutal mode: block zz in HARDER and HARDEST modes
-    if ( brutal_should_block_quit() && nchar == 'z' ) {
+    if ( brutal_should_block_quit( false ) && nchar == 'z' ) {
       clearopbeep( cap->oap );
       break;
     }
@@ -6149,14 +6149,7 @@ static void nv_esc(cmdarg_T *cap)
                     && cap->count0 == 0
                     && cap->oap->regname == 0);
 
-  // Brutal mode: Handle ESC press tracking in EASY mode
-  brutal_handle_esc_press();
-  
-  // Check for triple ESC in EASY mode
-  if ( brutal_check_triple_esc() ) {
-    do_cmdline_cmd( "confirm qa" );
-    return;
-  }
+  // Brutal mode: Removed ESC detection (was unreliable)
 
   if (cap->arg) {               // true for CTRL-C
     if (restart_edit == 0 && cmdwin_type == 0 && !VIsual_active && no_reason) {

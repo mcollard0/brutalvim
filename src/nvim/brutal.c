@@ -21,10 +21,29 @@ BrutalMode brutal_mode = BRUTAL_NONE;
 uint8_t brutal_keymap[256];
 uint64_t brutal_esc_hold_start = 0;
 int brutal_ctrl_quit_count = 0;
-uint64_t brutal_esc_press_times[3] = {0};
+uint64_t brutal_esc_press_times[5] = {0};
 int brutal_esc_press_count = 0;
 char brutal_easter_egg_buffer[32] = {0};
 int brutal_easter_egg_pos = 0;
+
+/// Helper function to shuffle array using Fisher-Yates algorithm
+static void shuffle_char_array( char *keys, int count )
+{
+  for ( int i = count - 1; i > 0; i-- ) {
+    int j = rand() % ( i + 1 );
+    char temp = keys[i];
+    keys[i] = keys[j];
+    keys[j] = temp;
+  }
+}
+
+/// Helper function to apply shuffled mappings
+static void apply_shuffled_mapping( const char *original, const char *shuffled, int count )
+{
+  for ( int i = 0; i < count; i++ ) {
+    brutal_keymap[( uint8_t )original[i]] = ( uint8_t )shuffled[i];
+  }
+}
 
 /// Initialize brutal mode keybinding randomization for HARDEST mode
 /// Uses logical replacement groups to maintain some usability
@@ -61,28 +80,12 @@ static void brutal_init_keymap_hardest( void )
   // Seed RNG with current time for randomization
   srand( ( unsigned int )time( NULL ) );
 
-  // Shuffle each group using Fisher-Yates algorithm
-  auto void shuffle_group( char *keys, int count ) {
-    for ( int i = count - 1; i > 0; i-- ) {
-      int j = rand() % ( i + 1 );
-      char temp = keys[i];
-      keys[i] = keys[j];
-      keys[j] = temp;
-    }
-  }
-
-  shuffle_group( motion_keys, motion_count );
-  shuffle_group( edit_keys, edit_count );
-  shuffle_group( visual_keys, visual_count );
-  shuffle_group( search_keys, search_count );
-  shuffle_group( mark_keys, mark_count );
-
-  // Apply shuffled mappings
-  auto void apply_shuffled_mapping( const char *original, const char *shuffled, int count ) {
-    for ( int i = 0; i < count; i++ ) {
-      brutal_keymap[( uint8_t )original[i]] = ( uint8_t )shuffled[i];
-    }
-  }
+  // Shuffle each group
+  shuffle_char_array( motion_keys, motion_count );
+  shuffle_char_array( edit_keys, edit_count );
+  shuffle_char_array( visual_keys, visual_count );
+  shuffle_char_array( search_keys, search_count );
+  shuffle_char_array( mark_keys, mark_count );
 
   char motion_original[] = { 'h', 'j', 'k', 'l', 'w', 'b', 'e', 'W', 'B', 'E',
                              '0', '^', '$', 'G', 'g', 'f', 'F', 't', 'T', '%' };
@@ -104,7 +107,7 @@ static void brutal_init_keymap_hardest( void )
   int other_count = sizeof( other_keys ) / sizeof( other_keys[0] );
   char other_shuffled[sizeof( other_keys )];
   memcpy( other_shuffled, other_keys, sizeof( other_keys ) );
-  shuffle_group( other_shuffled, other_count );
+  shuffle_char_array( other_shuffled, other_count );
   apply_shuffled_mapping( other_keys, other_shuffled, other_count );
 }
 
@@ -142,9 +145,8 @@ void brutal_show_banner( void )
       msg_puts( "\n" );
       msg_puts( "Enabled features:\n" );
       msg_puts( "  • Arrow keys enabled for navigation\n" );
-      msg_puts( "  • Hold ESC for 5 seconds to quit (with save prompt)\n" );
-      msg_puts( "  • Press ESC three times within 5 seconds to quit (with save prompt)\n" );
-      msg_puts( "  • Easter egg: Type 'fuck you let me out' anywhere to quit!\n" );
+      msg_puts( "  • Easter egg: Type 'fuck you let me out' in INSERT mode to force quit!\n" );
+      msg_puts( "  • You can use :quit! and :q! to force quit without saving\n" );
       msg_puts( "\n" );
       msg_puts( "Modified keybindings (Windows-style):\n" );
       msg_puts( "  • Ctrl+Z  →  Undo (u)\n" );
@@ -264,9 +266,16 @@ int brutal_remap_key( int c )
 }
 
 /// Check if quit command should be blocked (HARDER and HARDEST modes)
+/// @param force true if using :quit! or :q!
 /// @return true if quit should be blocked
-bool brutal_should_block_quit( void )
+bool brutal_should_block_quit( bool force )
 {
+  // EASY mode: allow force quit
+  if ( brutal_mode == BRUTAL_EASY && force ) {
+    return false;
+  }
+  
+  // HARDER/HARDEST: always block
   return ( brutal_mode == BRUTAL_HARDER || brutal_mode == BRUTAL_HARDEST );
 }
 
@@ -292,19 +301,26 @@ bool brutal_easy_mode_quit_check( int c )
   return false;
 }
 
-/// Check if ESC has been held long enough in EASY mode
-/// @return true if 5 seconds have elapsed
-bool brutal_easy_mode_esc_held( void )
+/// Check if ESC has been pressed repeatedly (5 times within 10 seconds)
+/// @return true if threshold met
+bool brutal_easy_mode_esc_repeated( void )
 {
-  if ( brutal_mode != BRUTAL_EASY || brutal_esc_hold_start == 0 ) {
+  if ( brutal_mode != BRUTAL_EASY ) {
     return false;
   }
 
-  uint64_t now = os_hrtime();
-  uint64_t elapsed_ns = now - brutal_esc_hold_start;
-  uint64_t five_seconds_ns = 5000000000ULL;  // 5 seconds in nanoseconds
+  // Check if we have 5 ESC presses
+  if ( brutal_esc_press_count >= 5 ) {
+    uint64_t now = os_hrtime();
+    uint64_t ten_seconds_ns = 10000000000ULL;  // 10 seconds
+    
+    // Check if oldest press (4th back) is within 10 seconds
+    if ( now - brutal_esc_press_times[4] <= ten_seconds_ns ) {
+      return true;
+    }
+  }
 
-  return elapsed_ns >= five_seconds_ns;
+  return false;
 }
 
 /// Calculate Levenshtein distance between two strings
@@ -346,7 +362,7 @@ static int levenshtein_distance( const char *s1, const char *s2 )
 }
 
 /// Check if easter egg phrase was typed
-/// @return true if "fuck you let me out" detected (with ~5 char tolerance)
+/// @return true if "fuckyouletmeout" detected (exact match, case-insensitive)
 bool brutal_check_easter_egg( void )
 {
   const char *target = "fuckyouletmeout";
@@ -364,12 +380,26 @@ bool brutal_check_easter_egg( void )
     // Skip spaces, punctuation, etc.
   }
   
-  if ( norm_pos < 10 ) {
-    return false;  // Too short to match
+  // Need at least the target length
+  if ( norm_pos < ( int )strlen( target ) ) {
+    return false;
   }
   
-  int distance = levenshtein_distance( normalized, target );
-  return distance <= 5;  // Allow ~5 character differences
+  // Check if the normalized string contains the target
+  normalized[norm_pos] = '\0';
+  bool found = strstr( normalized, target ) != NULL;
+  
+  // DEBUG: Write to log
+  if ( norm_pos > 10 ) {  // Only log significant strings
+    FILE *f = fopen( "/tmp/brutal_debug.log", "a" );
+    if ( f ) {
+      fprintf( f, "Checking: '%s' (len=%d) against '%s' -> %s\n",
+               normalized, norm_pos, target, found ? "MATCH" : "no match" );
+      fclose( f );
+    }
+  }
+  
+  return found;
 }
 
 /// Record a character for easter egg detection
@@ -392,7 +422,7 @@ void brutal_record_char( int c )
   }
 }
 
-/// Handle ESC press in EASY mode (for triple-press detection)
+/// Handle ESC press in EASY mode (for repeated-press detection)
 void brutal_handle_esc_press( void )
 {
   if ( brutal_mode != BRUTAL_EASY ) {
@@ -400,34 +430,41 @@ void brutal_handle_esc_press( void )
   }
   
   uint64_t now = os_hrtime();
-  uint64_t five_seconds_ns = 5000000000ULL;
   
-  // Shift timestamps
+  // Shift timestamps (keep last 5)
+  brutal_esc_press_times[4] = brutal_esc_press_times[3];
+  brutal_esc_press_times[3] = brutal_esc_press_times[2];
   brutal_esc_press_times[2] = brutal_esc_press_times[1];
   brutal_esc_press_times[1] = brutal_esc_press_times[0];
   brutal_esc_press_times[0] = now;
   
-  // Check if 3 presses within 5 seconds
-  if ( brutal_esc_press_times[2] != 0 ) {
-    uint64_t elapsed = now - brutal_esc_press_times[2];
-    if ( elapsed <= five_seconds_ns ) {
-      brutal_esc_press_count = 3;
-    } else {
-      brutal_esc_press_count = 0;
-    }
+  // Increment counter
+  if ( brutal_esc_press_count < 5 ) {
+    brutal_esc_press_count++;
   }
 }
 
-/// Check if 3 ESC presses detected in EASY mode
-bool brutal_check_triple_esc( void )
+/// Check if 5 ESC presses detected in EASY mode within 10 seconds
+bool brutal_check_repeated_esc( void )
 {
   if ( brutal_mode != BRUTAL_EASY ) {
     return false;
   }
   
-  if ( brutal_esc_press_count >= 3 ) {
-    brutal_esc_press_count = 0;  // Reset
-    return true;
+  if ( brutal_esc_press_count >= 5 ) {
+    uint64_t now = os_hrtime();
+    uint64_t ten_seconds_ns = 10000000000ULL;
+    
+    // Check if 5th press back is within 10 seconds
+    if ( brutal_esc_press_times[4] != 0 && 
+         ( now - brutal_esc_press_times[4] ) <= ten_seconds_ns ) {
+      // Reset counter
+      brutal_esc_press_count = 0;
+      for ( int i = 0; i < 5; i++ ) {
+        brutal_esc_press_times[i] = 0;
+      }
+      return true;
+    }
   }
   return false;
 }

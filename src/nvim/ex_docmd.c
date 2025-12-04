@@ -4771,9 +4771,9 @@ bool before_quit_autocmds(win_T *wp, bool quit_all, bool forceit)
 /// ":{nr}quit": quit window {nr}
 static void ex_quit(exarg_T *eap)
 {
-  // Brutal mode: block quit in HARDER and HARDEST modes
-  if ( brutal_should_block_quit() ) {
-    emsg( "Quit commands are disabled in this brutal mode" );
+  // Brutal mode: block quit in HARDER and HARDEST modes (allow :q! in EASY)
+  if ( brutal_should_block_quit( eap->forceit ) ) {
+    emsg( "Quit commands are disabled in this brutal mode. Try :q! or :quit!" );
     return;
   }
 
@@ -4875,9 +4875,9 @@ int before_quit_all(exarg_T *eap)
 /// ":qall": try to quit all windows
 static void ex_quitall(exarg_T *eap)
 {
-  // Brutal mode: block quit in HARDER and HARDEST modes
-  if ( brutal_should_block_quit() ) {
-    emsg( "Quit commands are disabled in this brutal mode" );
+  // Brutal mode: block quit in HARDER and HARDEST modes (allow :qa! in EASY)
+  if ( brutal_should_block_quit( eap->forceit ) ) {
+    emsg( "Quit commands are disabled in this brutal mode. Try :qa! or :qall!" );
     return;
   }
 

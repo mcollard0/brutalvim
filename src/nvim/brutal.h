@@ -19,9 +19,9 @@ extern BrutalMode brutal_mode;
 extern uint8_t brutal_keymap[256];
 
 /// Easy mode state tracking
-extern uint64_t brutal_esc_hold_start;  ///< Time when ESC was first pressed
+extern uint64_t brutal_esc_hold_start;  ///< Unused (kept for compatibility)
 extern int brutal_ctrl_quit_count;      ///< Count of consecutive ctrl+x/c/q presses
-extern uint64_t brutal_esc_press_times[3];  ///< Timestamps of last 3 ESC presses
+extern uint64_t brutal_esc_press_times[5];  ///< Timestamps of last 5 ESC presses
 extern int brutal_esc_press_count;      ///< Count of ESC presses
 
 /// Easter egg buffer for "fuck you let me out"
