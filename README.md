@@ -1,3 +1,5 @@
+<img align=center width="1066" height="836" alt="image" src="https://github.com/user-attachments/assets/d6d7aae6-2d31-491b-8d6b-76a5678d683d" />
+
 #
 # BrutalVim Architecture Evaluation 
 # A README
