@@ -178,7 +178,7 @@ static const struct nv_cmd {
   { Ctrl_G,    nv_ctrlg,       0,                      0 },
   { Ctrl_H,    nv_ctrlh,       0,                      0 },
   { Ctrl_I,    nv_pcmark,      0,                      0 },
-  { NL,        nv_down,        0,                      false },
+  { NL,        nv_win_visual_enter, 0,                 false },
   { Ctrl_K,    nv_error,       0,                      0 },
   { Ctrl_L,    nv_clear,       0,                      0 },
   { CAR,       nv_down,        0,                      true },
@@ -190,11 +190,11 @@ static const struct nv_cmd {
   { Ctrl_S,    nv_ignore,      0,                      0 },
   { Ctrl_T,    nv_tagpop,      NV_NCW,                 0 },
   { Ctrl_U,    nv_halfpage,    0,                      0 },
-  { Ctrl_V,    nv_visual,      0,                      false },
+  { Ctrl_V,    nv_win_paste,   0,                      false },
   { 'V',       nv_visual,      0,                      false },
   { 'v',       nv_visual,      0,                      false },
   { Ctrl_W,    nv_window,      0,                      0 },
-  { Ctrl_X,    nv_addsub,      0,                      0 },
+  { Ctrl_X,    nv_win_cut,     0,                      0 },
   { Ctrl_Y,    nv_scroll_line, 0,                      false },
   { Ctrl_Z,    nv_suspend,     0,                      0 },
   { ESC,       nv_esc,         0,                      false },
@@ -326,14 +326,14 @@ static const struct nv_cmd {
   { K_KINS,    nv_edit,        0,                      0 },
   { K_BS,      nv_ctrlh,       0,                      0 },
   { K_UP,      nv_up,          NV_SSS|NV_STS,          false },
-  { K_S_UP,    nv_page,        NV_SS,                  BACKWARD },
+  { K_S_UP,    nv_win_shift_arrow, NV_SS,              BACKWARD },
   { K_DOWN,    nv_down,        NV_SSS|NV_STS,          false },
-  { K_S_DOWN,  nv_page,        NV_SS,                  FORWARD },
+  { K_S_DOWN,  nv_win_shift_arrow, NV_SS,              FORWARD },
   { K_LEFT,    nv_left,        NV_SSS|NV_STS|NV_RL,    0 },
-  { K_S_LEFT,  nv_bck_word,    NV_SS|NV_RL,            0 },
+  { K_S_LEFT,  nv_win_shift_arrow, NV_SS|NV_RL,        0 },
   { K_C_LEFT,  nv_bck_word,    NV_SSS|NV_RL|NV_STS,    1 },
   { K_RIGHT,   nv_right,       NV_SSS|NV_STS|NV_RL,    0 },
-  { K_S_RIGHT, nv_wordcmd,     NV_SS|NV_RL,            false },
+  { K_S_RIGHT, nv_win_shift_arrow, NV_SS|NV_RL,        false },
   { K_C_RIGHT, nv_wordcmd,     NV_SSS|NV_RL|NV_STS,    true },
   { K_PAGEUP,  nv_page,        NV_SSS|NV_STS,          BACKWARD },
   { K_KPAGEUP, nv_page,        NV_SSS|NV_STS,          BACKWARD },
@@ -6152,6 +6152,24 @@ static void nv_esc(cmdarg_T *cap)
   // Brutal mode: Removed ESC detection (was unreliable)
 
   if (cap->arg) {               // true for CTRL-C
+    // EASY mode: Ctrl+C in visual mode copies to clipboard
+    if (VIsual_active && brutal_mode == BRUTAL_EASY) {
+      // Set up yank operator - use unnamed register (0 means use default)
+      // This ensures yank works even without clipboard provider
+      cap->oap->regname = 0;  // Use unnamed/default register
+      cap->oap->op_type = OP_YANK;
+      cap->cmdchar = 'y';  // Simulate 'y' command for do_pending_operator
+      
+      // Call do_pending_operator to execute the yank on the visual selection
+      do_pending_operator(cap, curwin->w_curswant, false);
+      
+      // Ensure clean state after operation
+      clearop(cap->oap);
+      // Clear got_int which may have been set by Ctrl+C signal
+      got_int = false;
+      return;
+    }
+    
     if (restart_edit == 0 && cmdwin_type == 0 && !VIsual_active && no_reason) {
       if (anyBufIsChanged()) {
         msg(_("Type  :qa!  and press <Enter> to abandon all changes"
@@ -6663,6 +6681,102 @@ static void nv_event(cmdarg_T *cap)
     // Tricky: if restart_edit was set before the handler we are in ctrl-o mode,
     // but if not, the event should be allowed to trigger :startinsert.
     cap->retval |= CA_COMMAND_BUSY;  // don't call edit() or restart Select now
+  }
+}
+
+/// Windows-style Ctrl+X: Cut to clipboard (EASY mode only)
+static void nv_win_cut(cmdarg_T *cap)
+{
+  if (brutal_mode != BRUTAL_EASY) {
+    // Not in EASY mode, use default Ctrl+X behavior (number decrement)
+    nv_addsub(cap);
+    return;
+  }
+  
+  if (VIsual_active) {
+    // Visual mode: cut selection to clipboard
+    cap->oap->regname = '+';
+    cap->cmdchar = 'd';
+    nv_operator(cap);
+  } else {
+    // Normal mode: cut entire line to clipboard
+    cap->oap->regname = '+';
+    cap->cmdchar = 'd';
+    cap->cmdchar = 'd';  // dd
+    nv_operator(cap);
+  }
+}
+
+/// Windows-style Ctrl+V: Paste from clipboard (EASY mode only) 
+static void nv_win_paste(cmdarg_T *cap)
+{
+  if (brutal_mode != BRUTAL_EASY) {
+    // Not in EASY mode, use default Ctrl+V behavior (visual block)
+    nv_visual(cap);
+    return;
+  }
+  
+  // Paste from clipboard register '+'
+  cap->oap->regname = '+';
+  cap->cmdchar = 'p';
+  nv_put(cap);
+}
+
+/// Enter in visual mode: Copy and exit (EASY mode only)
+static void nv_win_visual_enter(cmdarg_T *cap)
+{
+  if (brutal_mode != BRUTAL_EASY || !VIsual_active) {
+    // Not in EASY mode or not in visual - default Enter behavior
+    nv_down(cap);
+    return;
+  }
+  
+  // Copy to clipboard and exit visual mode
+  cap->oap->regname = '+';
+  cap->oap->op_type = OP_YANK;
+  op_yank(cap->oap, false);
+  end_visual_mode();
+  check_cursor_col(curwin);
+  curwin->w_set_curswant = true;
+  redraw_curbuf_later(UPD_INVERTED);
+  clearop(cap->oap);
+}
+
+/// Shift+Arrow: Start/extend visual selection (EASY mode only)
+static void nv_win_shift_arrow(cmdarg_T *cap)
+{
+  if (brutal_mode != BRUTAL_EASY) {
+    // Not in EASY mode - use default behavior
+    if (cap->cmdchar == K_S_UP) {
+      nv_page(cap);
+    } else if (cap->cmdchar == K_S_DOWN) {
+      nv_page(cap);
+    } else if (cap->cmdchar == K_S_LEFT) {
+      nv_bck_word(cap);
+    } else if (cap->cmdchar == K_S_RIGHT) {
+      nv_wordcmd(cap);
+    }
+    return;
+  }
+  
+  // EASY mode: Start visual selection if not already active
+  // Use Visual mode (not Select mode) for Windows-style selection
+  if (!VIsual_active) {
+    VIsual_select = false;  // Ensure we're in Visual, not Select mode
+    n_start_visual_mode('v');
+  }
+  
+  // Move cursor based on arrow key - visual mode extends automatically
+  if (cap->cmdchar == K_S_UP) {
+    cap->arg = false;  // nv_up expects this
+    nv_up(cap);
+  } else if (cap->cmdchar == K_S_DOWN) {
+    cap->arg = false;
+    nv_down(cap);
+  } else if (cap->cmdchar == K_S_LEFT) {
+    nv_left(cap);
+  } else if (cap->cmdchar == K_S_RIGHT) {
+    nv_right(cap);
   }
 }
 

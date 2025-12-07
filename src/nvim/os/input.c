@@ -9,6 +9,7 @@
 #include "nvim/api/private/defs.h"
 #include "nvim/ascii_defs.h"
 #include "nvim/autocmd.h"
+#include "nvim/brutal.h"
 #include "nvim/autocmd_defs.h"
 #include "nvim/buffer_defs.h"
 #include "nvim/event/loop.h"
@@ -539,6 +540,12 @@ static size_t input_read_cb(RStream *stream, const char *buf, size_t c, void *da
 static void process_ctrl_c(void)
 {
   if (!ctrl_c_interrupts) {
+    return;
+  }
+
+  // In EASY mode with visual selection active, Ctrl+C is used for copy,
+  // so don't treat it as an interrupt signal.
+  if ( brutal_windows_keys_active() && VIsual_active ) {
     return;
   }
 

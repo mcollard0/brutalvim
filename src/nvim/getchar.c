@@ -1773,16 +1773,44 @@ int vgetc(void)
 
       case K_KUP:
       case K_XUP:
-        c = K_UP; break;
+        c = K_UP;
+        // fall through
+      case K_UP:
+        if (mod_mask == MOD_MASK_SHIFT) {
+          c = K_S_UP;
+          mod_mask = 0;
+        }
+        break;
       case K_KDOWN:
       case K_XDOWN:
-        c = K_DOWN; break;
+        c = K_DOWN;
+        // fall through
+      case K_DOWN:
+        if (mod_mask == MOD_MASK_SHIFT) {
+          c = K_S_DOWN;
+          mod_mask = 0;
+        }
+        break;
       case K_KLEFT:
       case K_XLEFT:
-        c = K_LEFT; break;
+        c = K_LEFT;
+        // fall through
+      case K_LEFT:
+        if (mod_mask == MOD_MASK_SHIFT) {
+          c = K_S_LEFT;
+          mod_mask = 0;
+        }
+        break;
       case K_KRIGHT:
       case K_XRIGHT:
-        c = K_RIGHT; break;
+        c = K_RIGHT;
+        // fall through
+      case K_RIGHT:
+        if (mod_mask == MOD_MASK_SHIFT) {
+          c = K_S_RIGHT;
+          mod_mask = 0;
+        }
+        break;
       }
 
       break;
@@ -1792,11 +1820,14 @@ int vgetc(void)
   }
 
   // Brutal mode key filtering and remapping
-  if ( brutal_should_block_key( c ) ) {
-    c = K_IGNORE;  // Block cursor keys in HARD/HARDER/HARDEST modes
-  } else {
-    c = brutal_remap_key( c );  // Apply HARDEST mode randomization
-    c = brutal_apply_easy_mode_mappings( c );  // Apply EASY mode Windows-style mappings
+  // Only apply blocking and remapping in NORMAL mode to prevent interference with insert mode
+  if ( ( State & MODE_NORMAL ) || ( State & MODE_VISUAL ) || ( State & MODE_OP_PENDING ) ) {
+    if ( brutal_should_block_key( c ) ) {
+      c = K_IGNORE;  // Block cursor keys in HARD/HARDER/HARDEST modes
+    } else {
+      c = brutal_remap_key( c );  // Apply HARDEST mode randomization
+      c = brutal_apply_easy_mode_mappings( c );  // Apply EASY mode Windows-style mappings
+    }
   }
   
   // EASY mode: Track ESC presses (unused for now, kept for compatibility)

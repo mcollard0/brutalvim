@@ -12,6 +12,7 @@
 
 #include "nvim/ascii_defs.h"
 #include "nvim/brutal.h"
+#include "nvim/globals.h"
 #include "nvim/keycodes.h"
 #include "nvim/message.h"
 #include "nvim/os/time.h"
@@ -117,6 +118,16 @@ void brutal_init( void )
   if ( brutal_mode == BRUTAL_HARDEST ) {
     brutal_init_keymap_hardest();
   }
+  
+  // EASY mode: Enable shift-arrow text selection and clipboard operations
+  if ( brutal_mode == BRUTAL_EASY ) {
+    // Set keymodel to include "startsel" for shift-selection
+    // This enables Shift+Arrow to start selection
+    do_cmdline_cmd( "set keymodel=startsel,stopsel" );
+    
+    // Set selectmode to "key" so Shift+Arrow enters select mode
+    do_cmdline_cmd( "set selectmode=key" );
+  }
 }
 
 /// Display brutal mode startup banner
@@ -220,38 +231,22 @@ bool brutal_should_block_key( int c )
   return false;
 }
 
-/// Apply Windows-style key mappings for EASY mode
+/// Apply Windows-style key mappings for default mode (always on)
+/// Handles Shift+Arrow for visual selection, Ctrl+C/V/X for clipboard
 /// @param c The character to remap
-/// @return The remapped character (or original if no mapping)
+/// @return The remapped character (or K_IGNORE if handled internally)
 int brutal_apply_easy_mode_mappings( int c )
 {
-  if ( brutal_mode != BRUTAL_EASY ) {
-    return c;
+  // Map Ctrl+Z to undo (always available, not just EASY mode)
+  if ( c == Ctrl_Z ) {
+    return 'u';
   }
-
-  // Windows-style shortcuts for EASY mode
-  // Ctrl+X = Cut (visual mode: delete to clipboard)
-  // Ctrl+C = Copy (visual mode: yank to clipboard)  
-  // Ctrl+V = Paste (insert/normal: paste from clipboard)
-  // Ctrl+Z = Undo
-  // Note: These mappings work by returning different keycodes
-  // The actual clipboard operations are handled by Neovim's existing
-  // visual mode and paste mechanisms
   
-  switch ( c ) {
-    case Ctrl_Z:
-      // Map Ctrl+Z to 'u' (undo) in normal mode
-      return 'u';
-    
-    // Ctrl+X, Ctrl+C, Ctrl+V are handled differently:
-    // They should trigger clipboard operations, but we keep them
-    // as-is to let Neovim's own handling work, or we can map them
-    // For now, let normal Neovim handle Ctrl+C/V
-    // Ctrl+X in normal mode can be mapped to cut line
-    
-    default:
-      return c;
-  }
+  // Shift+Arrow keys are handled in normal.c/visual mode code
+  // Ctrl+C/V/X are handled in normal.c/visual mode code
+  // This function is for simple character remapping only
+  
+  return c;
 }
 
 /// Apply key remapping for HARDEST mode
@@ -265,17 +260,34 @@ int brutal_remap_key( int c )
   return c;
 }
 
+/// Check if Windows-style keybindings should be active (EASY mode only)
+/// @return true if EASY mode is active
+bool brutal_windows_keys_active( void )
+{
+  return brutal_mode == BRUTAL_EASY;
+}
+
 /// Check if quit command should be blocked (HARDER and HARDEST modes)
 /// @param force true if using :quit! or :q!
 /// @return true if quit should be blocked
 bool brutal_should_block_quit( bool force )
 {
-  // EASY mode: allow force quit
+  // Never block quit in headless or embedded modes (build system, automation, etc.)
+  if ( headless_mode || embedded_mode ) {
+    return false;
+  }
+  
+  // Default mode (BRUTAL_NONE) and EASY/HARD: never block
+  if ( brutal_mode == BRUTAL_NONE || brutal_mode == BRUTAL_EASY || brutal_mode == BRUTAL_HARD ) {
+    return false;
+  }
+  
+  // EASY mode with force quit: allow
   if ( brutal_mode == BRUTAL_EASY && force ) {
     return false;
   }
   
-  // HARDER/HARDEST: always block
+  // HARDER/HARDEST: block ALL quit commands including forced quit
   return ( brutal_mode == BRUTAL_HARDER || brutal_mode == BRUTAL_HARDEST );
 }
 
