@@ -22,6 +22,7 @@ BrutalMode brutal_mode = BRUTAL_NONE;
 uint8_t brutal_keymap[256];
 uint64_t brutal_esc_hold_start = 0;
 int brutal_ctrl_quit_count = 0;
+uint64_t brutal_ctrl_quit_times[5] = {0};
 uint64_t brutal_esc_press_times[5] = {0};
 int brutal_esc_press_count = 0;
 char brutal_easter_egg_buffer[32] = {0};
@@ -127,7 +128,12 @@ void brutal_init( void )
     
     // Set selectmode to "key" so Shift+Arrow enters select mode
     do_cmdline_cmd( "set selectmode=key" );
+    // Set keymodel to start selection with shift-keys
+    do_cmdline_cmd( "set keymodel=startsel,stopsel" );
   }
+
+  // Add :Q command alias for :quit
+  do_cmdline_cmd("command! Q quit");
 }
 
 /// Display brutal mode startup banner
@@ -291,7 +297,58 @@ bool brutal_should_block_quit( bool force )
   return ( brutal_mode == BRUTAL_HARDER || brutal_mode == BRUTAL_HARDEST );
 }
 
-/// Handle easy mode special quit sequences
+/// Reset the quit counter
+void brutal_reset_ctrl_quit_count( void )
+{
+  brutal_ctrl_quit_count = 0;
+  for ( int i = 0; i < 5; i++ ) {
+    brutal_ctrl_quit_times[i] = 0;
+  }
+}
+
+/// Increment the quit counter and check time window
+void brutal_increment_ctrl_quit_count( void )
+{
+  uint64_t now = os_hrtime();
+
+  // Shift timestamps (keep last 5)
+  brutal_ctrl_quit_times[4] = brutal_ctrl_quit_times[3];
+  brutal_ctrl_quit_times[3] = brutal_ctrl_quit_times[2];
+  brutal_ctrl_quit_times[2] = brutal_ctrl_quit_times[1];
+  brutal_ctrl_quit_times[1] = brutal_ctrl_quit_times[0];
+  brutal_ctrl_quit_times[0] = now;
+
+  if ( brutal_ctrl_quit_count < 3 ) {
+    brutal_ctrl_quit_count++;
+  }
+}
+
+/// Check if quit counter reached threshold (3) within time window
+bool brutal_check_ctrl_quit( void )
+{
+  if ( brutal_ctrl_quit_count >= 3 ) {
+    uint64_t now = os_hrtime();
+    uint64_t eight_seconds_ns = 8000000000ULL;  // 8 seconds
+
+    // Check if 3rd press back (index 2) is within 8 seconds
+    if ( brutal_ctrl_quit_times[2] != 0 &&
+         ( now - brutal_ctrl_quit_times[2] ) <= eight_seconds_ns ) {
+      return true;
+    } else {
+        // Reset if timeout expired, but keep the current press as the first one
+        brutal_ctrl_quit_count = 1;
+        // The current timestamp is already at [0], clear others
+        brutal_ctrl_quit_times[1] = 0;
+        brutal_ctrl_quit_times[2] = 0;
+        brutal_ctrl_quit_times[3] = 0;
+        brutal_ctrl_quit_times[4] = 0;
+        return false;
+    }
+  }
+  return false;
+}
+
+/// Handle easy mode special quit sequences (unused now, replaced by direct checks)
 /// @param c The character pressed
 /// @return true if quit was triggered
 bool brutal_easy_mode_quit_check( int c )
@@ -302,18 +359,18 @@ bool brutal_easy_mode_quit_check( int c )
 
   // Check for Ctrl+X, Ctrl+C, or Ctrl+Q
   if ( c == Ctrl_X || c == Ctrl_C || c == Ctrl_Q ) {
-    brutal_ctrl_quit_count++;
-    if ( brutal_ctrl_quit_count >= 3 ) {
+    brutal_increment_ctrl_quit_count();
+    if ( brutal_check_ctrl_quit() ) {
       return true;  // Trigger quit
     }
   } else {
-    brutal_ctrl_quit_count = 0;  // Reset counter
+    brutal_reset_ctrl_quit_count();  // Reset counter
   }
 
   return false;
 }
 
-/// Check if ESC has been pressed repeatedly (5 times within 10 seconds)
+/// Check if ESC has been pressed repeatedly (3 times within 10 seconds)
 /// @return true if threshold met
 bool brutal_easy_mode_esc_repeated( void )
 {
@@ -321,13 +378,13 @@ bool brutal_easy_mode_esc_repeated( void )
     return false;
   }
 
-  // Check if we have 5 ESC presses
-  if ( brutal_esc_press_count >= 5 ) {
+  // Check if we have 3 ESC presses
+  if ( brutal_esc_press_count >= 3 ) {
     uint64_t now = os_hrtime();
     uint64_t ten_seconds_ns = 10000000000ULL;  // 10 seconds
     
-    // Check if oldest press (4th back) is within 10 seconds
-    if ( now - brutal_esc_press_times[4] <= ten_seconds_ns ) {
+    // Check if oldest press (2nd back) is within 10 seconds
+    if ( now - brutal_esc_press_times[2] <= ten_seconds_ns ) {
       return true;
     }
   }
@@ -451,25 +508,25 @@ void brutal_handle_esc_press( void )
   brutal_esc_press_times[0] = now;
   
   // Increment counter
-  if ( brutal_esc_press_count < 5 ) {
+  if ( brutal_esc_press_count < 3 ) {
     brutal_esc_press_count++;
   }
 }
 
-/// Check if 5 ESC presses detected in EASY mode within 10 seconds
+/// Check if 3 ESC presses detected in EASY mode within 10 seconds
 bool brutal_check_repeated_esc( void )
 {
   if ( brutal_mode != BRUTAL_EASY ) {
     return false;
   }
   
-  if ( brutal_esc_press_count >= 5 ) {
+  if ( brutal_esc_press_count >= 3 ) {
     uint64_t now = os_hrtime();
     uint64_t ten_seconds_ns = 10000000000ULL;
     
-    // Check if 5th press back is within 10 seconds
-    if ( brutal_esc_press_times[4] != 0 && 
-         ( now - brutal_esc_press_times[4] ) <= ten_seconds_ns ) {
+    // Check if 3rd press back (index 2) is within 10 seconds
+    if ( brutal_esc_press_times[2] != 0 &&
+         ( now - brutal_esc_press_times[2] ) <= ten_seconds_ns ) {
       // Reset counter
       brutal_esc_press_count = 0;
       for ( int i = 0; i < 5; i++ ) {

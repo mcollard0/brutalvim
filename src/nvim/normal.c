@@ -1251,6 +1251,12 @@ static int normal_execute(VimState *state, int key)
   // Execute the command!
   // Call the command function found in the commands table.
   s->ca.arg = nv_cmds[s->idx].cmd_arg;
+
+  // Reset ESC quit counter if a non-ESC command is executed in Normal mode
+  if (brutal_mode == BRUTAL_EASY && s->ca.cmdchar != ESC && s->ca.cmdchar != K_IGNORE && s->ca.cmdchar != K_MOUSEMOVE) {
+      brutal_esc_press_count = 0;
+  }
+
   (nv_cmds[s->idx].cmd_func)(&s->ca);
 
 finish:
@@ -6151,23 +6157,46 @@ static void nv_esc(cmdarg_T *cap)
 
   // Brutal mode: Removed ESC detection (was unreliable)
 
+  // Handle ESC in Easy Mode (3x check)
+  if (brutal_mode == BRUTAL_EASY && !cap->arg) { // cap->arg is false for ESC
+      brutal_handle_esc_press();
+      if (brutal_check_repeated_esc()) {
+          do_cmdline_cmd("qa!");
+          return;
+      }
+  }
+
   if (cap->arg) {               // true for CTRL-C
     // EASY mode: Ctrl+C in visual mode copies to clipboard
-    if (VIsual_active && brutal_mode == BRUTAL_EASY) {
-      // Set up yank operator - use unnamed register (0 means use default)
-      // This ensures yank works even without clipboard provider
-      cap->oap->regname = 0;  // Use unnamed/default register
-      cap->oap->op_type = OP_YANK;
-      cap->cmdchar = 'y';  // Simulate 'y' command for do_pending_operator
-      
-      // Call do_pending_operator to execute the yank on the visual selection
-      do_pending_operator(cap, curwin->w_curswant, false);
-      
-      // Ensure clean state after operation
-      clearop(cap->oap);
-      // Clear got_int which may have been set by Ctrl+C signal
-      got_int = false;
-      return;
+    if (brutal_mode == BRUTAL_EASY) {
+        if (VIsual_active) {
+          // Set up yank operator - use unnamed register (0 means use default)
+          // This ensures yank works even without clipboard provider
+          cap->oap->regname = '+';  // Use + register for clipboard
+          cap->oap->op_type = OP_YANK;
+          cap->cmdchar = 'y';  // Simulate 'y' command for do_pending_operator
+
+          // Call do_pending_operator to execute the yank on the visual selection
+          do_pending_operator(cap, curwin->w_curswant, false);
+
+          // Ensure clean state after operation
+          clearop(cap->oap);
+          // Clear got_int which may have been set by Ctrl+C signal
+          got_int = false;
+          brutal_reset_ctrl_quit_count();
+          return;
+        } else {
+            // Normal mode, no selection: Increment counter
+            brutal_increment_ctrl_quit_count();
+            if (brutal_check_ctrl_quit()) {
+                do_cmdline_cmd("qa!");
+                return;
+            }
+            // Block standard Ctrl-C message
+            clearop(cap->oap);
+            got_int = false;
+            return;
+        }
     }
     
     if (restart_edit == 0 && cmdwin_type == 0 && !VIsual_active && no_reason) {
