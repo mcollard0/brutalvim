@@ -28,6 +28,26 @@ extern int brutal_esc_press_count;      ///< Count of ESC presses
 extern char brutal_easter_egg_buffer[32];
 extern int brutal_easter_egg_pos;
 
+/// Function prototypes
+void brutal_init(void);
+void brutal_show_banner(void);
+bool brutal_should_block_key(int c);
+int brutal_apply_easy_mode_mappings(int c);
+int brutal_remap_key(int c);
+bool brutal_windows_keys_active(void);
+bool brutal_should_block_quit(bool force);
+bool brutal_easy_mode_quit_check(int c);
+bool brutal_easy_mode_esc_repeated(void);
+bool brutal_check_easter_egg(void);
+void brutal_record_char(int c);
+void brutal_handle_esc_press(void);
+bool brutal_check_repeated_esc(void);
+
+// New functions for managing quit counter explicitly
+void brutal_reset_ctrl_quit_count(void);
+void brutal_increment_ctrl_quit_count(void);
+bool brutal_check_ctrl_quit(void);
+
 #ifdef INCLUDE_GENERATED_DECLARATIONS
 # include "brutal.h.generated.h"
 #endif
