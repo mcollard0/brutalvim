@@ -13,6 +13,7 @@
 #include "nvim/ascii_defs.h"
 #include "nvim/autocmd.h"
 #include "nvim/autocmd_defs.h"
+#include "nvim/brutal.h"
 #include "nvim/buffer.h"
 #include "nvim/buffer_defs.h"
 #include "nvim/change.h"
@@ -671,6 +672,11 @@ static int insert_execute(VimState *state, int key)
   }
 
   if (s->c == Ctrl_V || s->c == Ctrl_Q) {
+    if (brutal_mode == BRUTAL_EASY && s->c == Ctrl_V) {
+      // Paste from clipboard (+)
+      do_put('+', NULL, BACKWARD, 1, PUT_CURSEND);
+      return 1; // Stay in Insert mode
+    }
     ins_ctrl_v();
     s->c = Ctrl_V;       // pretend CTRL-V is last typed character
     return 1;  // continue
@@ -731,6 +737,28 @@ static int insert_handle_key(InsertState *s)
     FALLTHROUGH;
 
   case Ctrl_C:        // End input mode
+    if (s->c == Ctrl_C && brutal_mode == BRUTAL_EASY) {
+      if (Visual.active) {
+        // Visual/Select active: Copy to clipboard and reset counter
+        do_cmdline_cmd("normal! \"+y");
+        brutal_reset_ctrl_quit_count();
+        // Return to Insert mode
+        return 1; // Continue in Insert mode
+      } else {
+        // No selection: Increment counter
+        brutal_increment_ctrl_quit_count();
+        if (brutal_check_ctrl_quit()) {
+           // Exit app
+           brutal_bypass_quit_block = true;
+           do_cmdline_cmd("qa!");
+           brutal_bypass_quit_block = false;
+           return 0;
+        }
+        // Don't exit insert mode
+        return 1;
+      }
+    }
+
     if (s->c == Ctrl_C && bt_cmdwin(curbuf)) {
       got_int = false;  // Don't interrupt autocmds etc.
       cmdwin_do_action("cancel");  // cmdwin: CTRL-C closes cmdwin, pre-fills cmdline.
@@ -750,6 +778,10 @@ static int insert_handle_key(InsertState *s)
     return 0;  // exit insert mode
 
   case Ctrl_Z:
+    if (brutal_mode == BRUTAL_EASY) {
+      u_undo(1);
+      return 1; // Stay in Insert mode
+    }
     goto normalchar;                // insert CTRL-Z as normal char
 
   case Ctrl_O:        // execute one command
@@ -881,6 +913,10 @@ static int insert_handle_key(InsertState *s)
     break;
 
   case Ctrl_U:        // delete all inserted text in current line
+    if (brutal_mode == BRUTAL_EASY) {
+      u_undo(1);
+      return 1; // Stay in Insert mode
+    }
     // CTRL-X CTRL-U completes with 'completefunc'.
     if (ctrl_x_mode_function()) {
       insert_do_complete(s);
@@ -1150,6 +1186,12 @@ static int insert_handle_key(InsertState *s)
     goto normalchar;
 
   case Ctrl_X:        // Enter CTRL-X mode
+    if (brutal_mode == BRUTAL_EASY && Visual.active) {
+        // Cut to clipboard (+)
+        do_cmdline_cmd("normal! \"+d");
+        brutal_reset_ctrl_quit_count();
+        return 1; // Stay in Insert mode
+    }
     ins_ctrl_x();
     break;
 

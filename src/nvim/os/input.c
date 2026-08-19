@@ -9,6 +9,7 @@
 #include "nvim/api/private/defs.h"
 #include "nvim/ascii_defs.h"
 #include "nvim/autocmd.h"
+#include "nvim/brutal.h"
 #include "nvim/autocmd_defs.h"
 #include "nvim/buffer_defs.h"
 #include "nvim/eval.h"
@@ -550,6 +551,12 @@ static bool inbuf_poll(int ms, MultiQueue *events)
 static void process_ctrl_c(void)
 {
   if (!ctrl_c_interrupts) {
+    return;
+  }
+
+  // In EASY mode with visual selection active, Ctrl+C is used for copy,
+  // so don't treat it as an interrupt signal.
+  if (brutal_windows_keys_active() && Visual.active) {
     return;
   }
 

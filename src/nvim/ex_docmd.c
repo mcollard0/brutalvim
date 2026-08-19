@@ -22,6 +22,7 @@
 #include "nvim/arglist.h"
 #include "nvim/ascii_defs.h"
 #include "nvim/autocmd.h"
+#include "nvim/brutal.h"
 #include "nvim/autocmd_defs.h"
 #include "nvim/buffer.h"
 #include "nvim/buffer_defs.h"
@@ -4758,6 +4759,12 @@ bool before_quit_autocmds(win_T *wp, bool quit_all, bool forceit)
 /// ":{nr}quit": quit window {nr}
 static void ex_quit(exarg_T *eap)
 {
+  // Brutal mode: block quit in HARDER and HARDEST modes
+  if (brutal_should_block_quit(eap->forceit)) {
+    emsg("Quit commands are disabled in this brutal mode.");
+    return;
+  }
+
   // Don't quit while editing the command line.
   if (text_locked()) {
     text_locked_msg();
@@ -4846,6 +4853,12 @@ int before_quit_all(exarg_T *eap)
 /// ":qall": try to quit all windows
 static void ex_quitall(exarg_T *eap)
 {
+  // Brutal mode: block quit in HARDER and HARDEST modes
+  if (brutal_should_block_quit(eap->forceit)) {
+    emsg("Quit commands are disabled in this brutal mode.");
+    return;
+  }
+
   if (before_quit_all(eap) == FAIL) {
     return;
   }

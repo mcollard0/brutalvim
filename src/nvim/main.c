@@ -28,6 +28,7 @@
 #include "nvim/arglist.h"
 #include "nvim/ascii_defs.h"
 #include "nvim/autocmd.h"
+#include "nvim/brutal.h"
 #include "nvim/autocmd_defs.h"
 #include "nvim/buffer.h"
 #include "nvim/buffer_defs.h"
@@ -296,6 +297,10 @@ int main(int argc, char **argv)
   nlua_init(argv, argc, params.lua_arg0);
   TIME_MSG("init lua interpreter");
 
+  // Initialize brutal mode system
+  brutal_init();
+  TIME_MSG("init brutal mode");
+
   // On Windows, channel_from_stdio() replaces fd 2 with CONOUT$ (for ConPTY
   // support). Save a dup of the original stderr first so that if server_init()
   // fails, print_mainerr() can write through the pipe to the TUI client's relay.
@@ -430,6 +435,9 @@ int main(int argc, char **argv)
   screenclear();
   win_new_screensize();
   TIME_MSG("clear screen");
+
+  // Display brutal mode banner if enabled
+  brutal_show_banner();
 
   // Handle "foo | nvim". EDIT_FILE may be overwritten now. #6299
   if (edit_stdin(&params)) {
@@ -1196,6 +1204,14 @@ static void command_line_scan(mparm_T *parmp)
           set_option_value_give_err(kOptShadafile, STATIC_CSTR_AS_OBJ("NONE"), 0);
         } else if (STRNICMP(argv[0] + argv_idx, "luamod-dev", 9) == 0) {
           nlua_disable_preload = true;
+        } else if (STRICMP(argv[0] + argv_idx, "easy") == 0) {
+          brutal_mode = BRUTAL_EASY;
+        } else if (STRICMP(argv[0] + argv_idx, "hard") == 0) {
+          brutal_mode = BRUTAL_HARD;
+        } else if (STRICMP(argv[0] + argv_idx, "harder") == 0) {
+          brutal_mode = BRUTAL_HARDER;
+        } else if (STRICMP(argv[0] + argv_idx, "hardest") == 0) {
+          brutal_mode = BRUTAL_HARDEST;
         } else {
           if (argv[0][argv_idx]) {
             mainerr(err_opt_unknown, argv[0], NULL);
