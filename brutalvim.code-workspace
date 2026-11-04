@@ -1,0 +1,23 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"clangd.arguments": [
+			"--compile-commands-dir=${workspaceFolder}/build"
+		],
+		"files.associations": {
+			"*.zon": "zig"
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"llvm-vs-code-extensions.vscode-clangd",
+			"ziglang.vscode-zig",
+			"sumneko.lua"
+		]
+	}
+}
+

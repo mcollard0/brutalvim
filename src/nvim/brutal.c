@@ -140,88 +140,10 @@ void brutal_init( void )
 }
 
 /// Display brutal mode startup banner
+/// Note: Startup splash is rendered natively via intro_message() in version.c
 void brutal_show_banner( void )
 {
-  if ( brutal_mode == BRUTAL_NONE ) {
-    return;
-  }
-
-  // ASCII art banner
-  msg_puts( "\n" );
-  msg_puts( "██████╗ ██████╗ ██╗   ██╗████████╗ █████╗ ██╗     ██╗   ██╗██╗███╗   ███╗\n" );
-  msg_puts( "██╔══██╗██╔══██╗██║   ██║╚══██╔══╝██╔══██╗██║     ██║   ██║██║████╗ ████║\n" );
-  msg_puts( "██████╔╝██████╔╝██║   ██║   ██║   ███████║██║     ██║   ██║██║██╔████╔██║\n" );
-  msg_puts( "██╔══██╗██╔══██╗██║   ██║   ██║   ██╔══██║██║     ╚██╗ ██╔╝██║██║╚██╔╝██║\n" );
-  msg_puts( "██████╔╝██║  ██║╚██████╔╝   ██║   ██║  ██║███████╗ ╚████╔╝ ██║██║ ╚═╝ ██║\n" );
-  msg_puts( "╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚══════╝  ╚═══╝  ╚═╝╚═╝     ╚═╝\n" );
-  msg_puts( "\n" );
-
-  // Mode indicator
-  switch ( brutal_mode ) {
-    case BRUTAL_EASY:
-      msg_puts( "═══════════════════════════════════════════════════════════════════════════\n" );
-      msg_puts( "                              [ EASY MODE ]                                 \n" );
-      msg_puts( "═══════════════════════════════════════════════════════════════════════════\n" );
-      msg_puts( "\n" );
-      msg_puts( "Enabled features:\n" );
-      msg_puts( "  • Arrow keys enabled for navigation\n" );
-      msg_puts( "  • Easter egg: Type 'fuck you let me out' in INSERT mode to force quit!\n" );
-      msg_puts( "  • You can use :quit! and :q! to force quit without saving\n" );
-      msg_puts( "\n" );
-      msg_puts( "Modified keybindings (Windows-style):\n" );
-      msg_puts( "  • Ctrl+Z  →  Undo (u)\n" );
-      msg_puts( "  • Ctrl+C  →  Copy/Yank (use in visual mode)\n" );
-      msg_puts( "  • Ctrl+X  →  Cut (use in visual mode)\n" );
-      msg_puts( "  • Ctrl+V  →  Paste (use \"+p or \"*p for clipboard)\n" );
-      msg_puts( "\n" );
-      msg_puts( "Tip: Select text in visual mode (v), then Ctrl+C to copy,\n" );
-      msg_puts( "     or Ctrl+X to cut. Use Ctrl+V or \"*p to paste.\n" );
-      break;
-
-    case BRUTAL_HARD:
-      msg_puts( "═══════════════════════════════════════════════════════════════════════════\n" );
-      msg_puts( "                              [ HARD MODE ]                                 \n" );
-      msg_puts( "═══════════════════════════════════════════════════════════════════════════\n" );
-      msg_puts( "\n" );
-      msg_puts( "Restrictions:\n" );
-      msg_puts( "  • Arrow keys disabled\n" );
-      msg_puts( "  • Use h/j/k/l for navigation\n" );
-      break;
-
-    case BRUTAL_HARDER:
-      msg_puts( "═══════════════════════════════════════════════════════════════════════════\n" );
-      msg_puts( "                             [ HARDER MODE ]                                \n" );
-      msg_puts( "═══════════════════════════════════════════════════════════════════════════\n" );
-      msg_puts( "\n" );
-      msg_puts( "Restrictions:\n" );
-      msg_puts( "  • Arrow keys disabled\n" );
-      msg_puts( "  • Standard quit commands disabled\n" );
-      msg_puts( "  • Exit commands blocked\n" );
-      break;
-
-    case BRUTAL_HARDEST:
-      msg_puts( "═══════════════════════════════════════════════════════════════════════════\n" );
-      msg_puts( "                            [ HARDEST MODE ]                                \n" );
-      msg_puts( "═══════════════════════════════════════════════════════════════════════════\n" );
-      msg_puts( "\n" );
-      msg_puts( "Restrictions:\n" );
-      msg_puts( "  • All keybindings randomized within logical groups\n" );
-      msg_puts( "  • Arrow keys disabled\n" );
-      msg_puts( "  • Copy/paste/yank operations remapped\n" );
-      msg_puts( "  • Undo operation remapped\n" );
-      msg_puts( "  • Visual mode keys remapped\n" );
-      msg_puts( "  • Standard quit commands disabled\n" );
-      msg_puts( "\n" );
-      msg_puts( "  Good luck! Figure out the new mappings yourself.\n" );
-      break;
-
-    default:
-      break;
-  }
-
-  msg_puts( "\n" );
-  msg_puts( "═══════════════════════════════════════════════════════════════════════════\n" );
-  msg_puts( "\n" );
+  // Startup splash is rendered natively via intro_message() in version.c
 }
 
 /// Check if a key should be blocked in current brutal mode

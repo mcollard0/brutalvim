@@ -436,9 +436,6 @@ int main(int argc, char **argv)
   win_new_screensize();
   TIME_MSG("clear screen");
 
-  // Display brutal mode banner if enabled
-  brutal_show_banner();
-
   // Handle "foo | nvim". EDIT_FILE may be overwritten now. #6299
   if (edit_stdin(&params)) {
     params.edit_type = EDIT_STDIN;

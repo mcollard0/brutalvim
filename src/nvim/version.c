@@ -14,6 +14,7 @@
 #include "auto/versiondef_git.h"
 #include "nvim/api/private/helpers.h"
 #include "nvim/ascii_defs.h"
+#include "nvim/brutal.h"
 #include "nvim/buffer.h"
 #include "nvim/buffer_defs.h"
 #include "nvim/charset.h"
@@ -4120,6 +4121,119 @@ bool may_show_intro(void)
           && (vim_strchr(p_shm, kShmIntro) == NULL));
 }
 
+static void do_intro_line(int row, char *mesg, bool colon, bool is_logo);
+
+/// Give an introductory message about BrutalVim modes.
+static void intro_message_brutal(bool colon)
+{
+  static char *(logo_full[]) = {
+    "██████╗ ██████╗ ██╗   ██╗████████╗ █████╗ ██╗     ██╗   ██╗██╗███╗   ███╗",
+    "██╔══██╗██╔══██╗██║   ██║╚══██╔══╝██╔══██╗██║     ██║   ██║██║████╗ ████║",
+    "██████╔╝██████╔╝██║   ██║   ██║   ███████║██║     ██║   ██║██║██╔████╔██║",
+    "██╔══██╗██╔══██╗██║   ██║   ██║   ██╔══██║██║     ╚██╗ ██╔╝██║██║╚██╔╝██║",
+    "██████╔╝██║  ██║╚██████╔╝   ██║   ██║  ██║███████╗ ╚████╔╝ ██║██║ ╚═╝ ██║",
+    "╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚══════╝  ╚═══╝  ╚═╝╚═╝     ╚═╝",
+  };
+
+  static char *(logo_compact[]) = {
+    "╔════════════════════════════════╗",
+    "║           BRUTALVIM            ║",
+    "╚════════════════════════════════╝",
+  };
+
+  static char *(easy_body[]) = {
+    "[ EASY MODE ]",
+    "────────────────────────────────────────────",
+    "• Arrow keys enabled for navigation",
+    "• Windows shortcuts: Ctrl+Z, Ctrl+C, Ctrl+V, Ctrl+X",
+    "• Easter egg: 'fuck you let me out' in INSERT mode",
+    "• Emergency quit: :q! or :quit!",
+    "────────────────────────────────────────────",
+    "type  :help brutal<Enter>   for brutal mode help",
+    "type  :q!<Enter>            to exit             ",
+  };
+
+  static char *(hard_body[]) = {
+    "[ HARD MODE ]",
+    "────────────────────────────────────────────",
+    "• Arrow keys & PageUp/PageDown disabled",
+    "• Navigation: h / j / k / l only",
+    "• Master standard Vim motions!",
+    "────────────────────────────────────────────",
+    "type  :help brutal<Enter>   for brutal mode help",
+    "type  :q<Enter>             to exit             ",
+  };
+
+  static char *(harder_body[]) = {
+    "[ HARDER MODE ]",
+    "────────────────────────────────────────────",
+    "• Arrow keys disabled (use h/j/k/l)",
+    "• Quit commands (:q, :quit, :qall) are BLOCKED",
+    "• Normal mode zz command is blocked",
+    "────────────────────────────────────────────",
+    "type  :help brutal<Enter>   for brutal mode help",
+  };
+
+  static char *(hardest_body[]) = {
+    "[ HARDEST MODE ]",
+    "────────────────────────────────────────────",
+    "• All keybindings randomized within groups!",
+    "• Arrow keys disabled, quit commands blocked",
+    "• Motions, edits, and visual keys shuffled",
+    "• Good luck figuring out the mappings!",
+    "────────────────────────────────────────────",
+    "type  :help brutal<Enter>   for brutal mode help",
+  };
+
+  char **body = NULL;
+  size_t body_size = 0;
+  switch (brutal_mode) {
+    case BRUTAL_EASY:
+      body = easy_body;
+      body_size = ARRAY_SIZE(easy_body);
+      break;
+    case BRUTAL_HARD:
+      body = hard_body;
+      body_size = ARRAY_SIZE(hard_body);
+      break;
+    case BRUTAL_HARDER:
+      body = harder_body;
+      body_size = ARRAY_SIZE(harder_body);
+      break;
+    case BRUTAL_HARDEST:
+      body = hardest_body;
+      body_size = ARRAY_SIZE(hardest_body);
+      break;
+    default:
+      return;
+  }
+
+  bool use_full_logo = (Columns >= 76 && Rows >= 20);
+  char **logo = use_full_logo ? logo_full : logo_compact;
+  size_t logo_size = use_full_logo ? ARRAY_SIZE(logo_full) : ARRAY_SIZE(logo_compact);
+
+  size_t total_lines = logo_size + 1 + body_size;
+  int blanklines = Rows - ((int)total_lines - 1);
+  if (p_ls > 1) {
+    blanklines -= Rows - topframe->fr_height;
+  }
+  if (blanklines < 0) {
+    blanklines = 0;
+  }
+  int row = blanklines / 2;
+
+  int min_cols = use_full_logo ? 76 : 36;
+  if (Columns >= min_cols || colon) {
+    for (size_t i = 0; i < logo_size && row < Rows - 1; i++) {
+      do_intro_line(row++, logo[i], colon, true);
+    }
+    row++;  // blank line
+    for (size_t i = 0; i < body_size && row < Rows - 1; i++) {
+      do_intro_line(row++, body[i], colon, false);
+    }
+  }
+}
+
 /// Give an introductory message about Vim.
 /// Only used when starting Vim on an empty file, without a file name.
 /// Or with the ":intro" command (for Sven :-).
@@ -4127,6 +4241,11 @@ bool may_show_intro(void)
 /// @param colon true for ":intro"
 void intro_message(bool colon)
 {
+  if (brutal_mode != BRUTAL_NONE) {
+    intro_message_brutal(colon);
+    return;
+  }
+
   static char *(lines[]) = {
     "│ ╲ ││",
     "││╲╲││",
@@ -4238,6 +4357,23 @@ static void do_intro_line(int row, char *mesg, bool colon, bool is_logo)
       p += clen;
     }
 
+    grid_line_flush();
+    return;
+  }
+
+  // Highlight mode header lines like "[ EASY MODE ]"
+  bool is_mode_header = (mesg[0] == '[' && strstr(mesg, "MODE ]") != NULL);
+  if (is_mode_header) {
+    int title_attr = syn_id2attr(syn_name2id("Title"));
+    int warning_attr = syn_id2attr(syn_name2id("WarningMsg"));
+    int error_attr = syn_id2attr(syn_name2id("ErrorMsg"));
+    int attr = (brutal_mode >= BRUTAL_HARDER) ? error_attr
+               : (brutal_mode == BRUTAL_HARD) ? warning_attr : title_attr;
+    for (char *p = mesg; *p != NUL;) {
+      int clen = utfc_ptr2len(p);
+      col += grid_line_puts(col, p, clen, attr);
+      p += clen;
+    }
     grid_line_flush();
     return;
   }
